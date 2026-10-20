@@ -221,6 +221,9 @@ a { color: var(--accent); text-decoration: none; }
 
 /* 필기판 */
 .padwrap { padding: 0; overflow: hidden; }
+/* 아이패드 사파리: 펜을 잠깐 멈추면 글자 선택·「복사하기」 메뉴가 떠서 풀이판이 파랗게 덮였다(10-20 장준원 영상) */
+.padwrap, .pad, .pad *, .hwr-strip, .hwr-strip * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+.pad canvas, .hwr-strip canvas { touch-action: none; }
 .padbar { display: flex; align-items: center; gap: 4px; padding: 8px; border-bottom: 1px solid var(--line); background: var(--surface); }
 .padbar .tool { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; color: var(--ink-2); }
 .padbar .tool svg { width: 20px; height: 20px; stroke: currentColor; }

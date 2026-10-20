@@ -23,7 +23,7 @@
 
   function attach(o) {
     const { q, ink, pad, host, act } = o;
-    let T = null, timer = null, alive = true, lines = [], drew = false;
+    let T = null, timer = null, alive = true, lines = [], drew = false, noSteps = false;
     const mp = {};   // 줄 열쇠 → Mathpix 로 읽은 줄(또는 "wait"/"fail")
     if (COACH.reset) COACH.reset(q);
     const layer = document.createElement("div");
@@ -31,8 +31,10 @@
     pad.appendChild(layer);
 
     Promise.all([STEPUI.load(q), COACH.load(q), HWR.load()]).then(([S, C]) => {
-      if (!alive || !S) return;
-      T = TRACER.create(q, S, C);
+      if (!alive) return;
+      // 단계 풀이 자료가 없는 문항도 줄은 읽는다: 읽은 식 표시 + 한 줄 안 계산 실수 + 정답 도달만(단계 판정은 없음)
+      noSteps = !S;
+      T = TRACER.create(q, S || null, C);
       if (ink.strokes.length) run();
     });
 
@@ -62,7 +64,8 @@
       if (got.drawing && !drew) { drew = true; COACH.log({ e: "그림", q: q.id }); }   // 코치가 시킨 그리기를 했다
       lines = got.map((L) => (typeof mp[L.key] === "object" ? mp[L.key] : L));
       lines.forEach(askMathpix);
-      const ev = T.update(lines);
+      let ev = T.update(lines);
+      if (noSteps) ev = ev.filter((e) => e.t === "slip" || e.t === "final");
       paint();
       if (ev.length) COACH.observe(host, q, ev, actX);
     }
@@ -71,6 +74,8 @@
       layer.innerHTML = lines.map((L) => {
         const inf = T.info(L.key) || { st: "none" };
         if (!L.tex || (inf.st === "none" && !L.eq)) return "";
+        // 잘 못 읽은 줄(문자 섞인 식 등)을 「?」 섞인 표로 띄우면 인식이 엉망으로 보인다 → 판정이 붙은 줄만 확신 낮아도 띄운다
+        if ((L.conf || 0) < TRACER.MINC && (inf.st === "none" || inf.st === "unknown")) return "";
         const lab = (LABEL[inf.st] || LABEL.none)(inf);
         // 줄이 오른쪽 끝까지 오면 표가 글씨를 가린다 → 줄 아래로
         const under = L.box.x1 > pad.clientWidth - 150;

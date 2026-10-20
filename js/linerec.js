@@ -146,7 +146,9 @@
       const vert = (s) => s.straight > 0.85 && Math.abs(Math.abs(s.ang) - 90) < 25;
       const flat = (s) => s.straight > 0.85 && (Math.abs(s.ang) < 25 || Math.abs(Math.abs(s.ang) - 180) < 25);
       const diag = (s) => s.straight > 0.8 && ((Math.abs(s.ang) > 25 && Math.abs(s.ang) < 65) || (Math.abs(s.ang) > 115 && Math.abs(s.ang) < 155));
-      const cross = (s, t) => Math.min(s.b.x1, t.b.x1) > Math.max(s.b.x0, t.b.x0) && Math.min(s.b.y1, t.b.y1) > Math.max(s.b.y0, t.b.y0);
+      // 곧은 획은 상자 폭·높이가 0 이라 겹침이 0 으로 나와 + 를 놓쳤다(10-20) → 글자 높이의 8% 까지 닿으면 교차로 본다
+      const tol = H * 0.08;
+      const cross = (s, t) => Math.min(s.b.x1, t.b.x1) > Math.max(s.b.x0, t.b.x0) - tol && Math.min(s.b.y1, t.b.y1) > Math.max(s.b.y0, t.b.y0) - tol;
       if (cross(s1, s2) && ((vert(s1) && flat(s2)) || (vert(s2) && flat(s1)))) return { k: "op", ch: "+", p: 0.9 };
       if (cross(s1, s2) && diag(s1) && diag(s2)) {
         const up = (s) => (s.ang > 0 && s.ang < 90) || s.ang < -90;   // 오른쪽 위로 가는 선

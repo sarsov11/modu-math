@@ -401,7 +401,7 @@
             <button class="tool" data-act="redo" aria-label="다시">${I.redo}</button>
             <button class="tool" data-act="clear" aria-label="모두 지우기">${I.trash}</button>
             <button class="tool" data-act="axes" aria-pressed="${q.g ? "true" : "false"}" aria-label="좌표축 깔기" title="좌표축 깔기 — 그래프를 그려 보며 풀기"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 20h17M4 20V3M4 20l14-14"/></svg></button>
-            <span class="lbl">풀이 공간 · 휘갈기면 지워져요${STEPUI.has(q) ? "" : " · 이 문항은 아직 풀이를 읽지 않아요"}</span>
+            <span class="lbl">풀이 공간 · 휘갈기면 지워져요</span>
             <button class="tool" data-act="read" aria-label="풀이 글자로 옮기기" title="풀이를 활자로 옮기기(설정에서 인식 키 필요)" style="width:auto;padding:0 10px;font-size:12.5px;font-weight:800">식 읽기</button>
           </div>
           <div class="pad ${q.g ? "axes" : ""}" id="pad"><svg class="axes-layer" aria-hidden="true"><line x1="0" y1="50%" x2="100%" y2="50%"/><line x1="50%" y1="0" x2="50%" y2="100%"/><text x="100%" dx="-14" y="50%" dy="-6">x</text><text x="50%" dx="6" y="16">y</text><text x="50%" dx="-13" y="50%" dy="15">O</text></svg></div>
@@ -436,7 +436,7 @@
       openSteps,
       reach: (k) => { if (st.stepSess && st.stepSess.reach) st.stepSess.reach(k); },
     };
-    if (STEPUI.has(q) && window.OBSERVE) obs = window.__obs = OBSERVE.attach({ q, ink, pad: $("#pad"), host: coachHost, act, onInk: () => stopIdle.poke && stopIdle.poke() });
+    if (window.OBSERVE) obs = window.__obs = OBSERVE.attach({ q, ink, pad: $("#pad"), host: coachHost, act, onInk: () => stopIdle.poke && stopIdle.poke() });
     COACH.load(q).then(() => { if (!st.done && coachHost.isConnected) { stopIdle = COACH.watchIdle(coachHost, q, act); window.__coachStop = () => stopIdle(); } });
     st.coach = { host: coachHost, act, stopIdle: () => stopIdle() };
     view().querySelectorAll("[data-tool]").forEach((b) => b.onclick = () => { ink.setTool(b.dataset.tool); view().querySelectorAll("[data-tool]").forEach((x) => x.setAttribute("aria-pressed", x === b)); });

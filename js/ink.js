@@ -38,11 +38,18 @@
   };
   Ink.prototype._bind = function () {
     const c = this.canvas;
+    // 아이패드 사파리는 포인터 이벤트를 막아도 터치 길게 누르기로 글자 선택·돋보기·메뉴를 띄운다 → 터치 기본 동작을 끈다
+    const stopTouch = (e) => { if (e.cancelable) e.preventDefault(); };
+    c.addEventListener("touchstart", stopTouch, { passive: false });
+    c.addEventListener("touchmove", stopTouch, { passive: false });
+    c.addEventListener("contextmenu", (e) => e.preventDefault());
+    this.host.addEventListener("selectstart", (e) => e.preventDefault());
     c.addEventListener("pointerdown", (e) => {
       if (e.pointerType === "pen") this.sawPen = true;
       if (this.sawPen && e.pointerType === "touch" && this.opts.penOnly !== false) return; // 손바닥 무시
       try { c.setPointerCapture(e.pointerId); } catch (err) {}
       e.preventDefault();
+      try { const sel = window.getSelection && window.getSelection(); if (sel && sel.rangeCount) sel.removeAllRanges(); } catch (err) {}
       const eraser = this.tool === "eraser" || e.button === 5 || (e.buttons & 32);
       this.cur = { tool: eraser ? "eraser" : this.tool, pts: [this._pt(e)], id: e.pointerId };
       if (this.cur.tool === "eraser") this._eraseAt(this.cur.pts[0]);
