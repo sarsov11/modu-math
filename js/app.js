@@ -523,13 +523,35 @@
       clearTimeout(timer);
       timer = setTimeout(() => doRead(k), 450);
     } });
+    window.__ansInk = ink;   // 시험용
+    let seq = 0;
     const doRead = (k) => {
+      const my = ++seq;
       if (!k.strokes.length) { read.innerHTML = `<span class="lab">아직 안 읽었어요</span>`; st.hand = ""; showConf(false); return; }
       HWR.load().then(() => {
         const r = HWR.recognize(k.strokes, k.h);
         st.hand = r.text; st.glyphs = r.glyphs;
         paintRead(r);
         showConf(!!r.text);
+        // 숫자 CNN 은 흘린 글씨에 약하다 → 공개 수식 모델(mfr.js)로 한 번 더 읽고, 답 꼴로 읽히면 그쪽을 쓴다(10-21)
+        // 숫자 CNN 이 모든 글자를 확신하고 답 꼴로 읽었으면 덮지 않는다(멀쩡한 답을 모델이 바꾸는 일 막기)
+        if (!window.MFR || MFR.failed) return;
+        if (r.text && HWR.gradable(r.text) && r.glyphs.every((g) => g.p >= 0.8)) return;
+        MFR.recognize(k.strokes, { letters: "" }).then((tex) => {
+          if (my !== seq) return;   // 그사이 더 썼거나 지웠다
+          const m = HWR.normAnswer(tex).replace(/\\cdot|\\times/g, "");
+          if (!HWR.gradable(m) || m === HWR.normAnswer(r.text)) return;
+          const chars = (s) => [...s].map((ch) => ({ ch, p: 0.9, alts: [] }));
+          let R;
+          if (m.includes("/")) {
+            const sign = m.startsWith("-") ? "-" : "", [n, d] = m.replace(/^-/, "").split("/");
+            const N = chars(n), D = chars(d);
+            R = { text: m, glyphs: [...chars(sign), ...N, { ch: "/", p: 1, alts: ["/"] }, ...D], frac: { num: N, den: D, sign } };
+          } else R = { text: m, glyphs: chars(m), frac: null };
+          st.hand = R.text; st.glyphs = R.glyphs;
+          paintRead(R);
+          showConf(true);
+        }).catch(() => {});
       });
     };
     const paintRead = (r) => {

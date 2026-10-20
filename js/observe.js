@@ -24,7 +24,13 @@
   function attach(o) {
     const { q, ink, pad, host, act } = o;
     let T = null, timer = null, alive = true, lines = [], drew = false, noSteps = false;
-    const mp = {};   // 줄 열쇠 → Mathpix 로 읽은 줄(또는 "wait"/"fail")
+    const mp = {};   // 줄 열쇠 → 모델로 읽은 줄(또는 "wait"/"fail")
+    // 모델이 고를 수 있는 로마 글자: 문항 수식에 나온 글자 + 풀이에 흔히 새로 쓰는 글자
+    const letters = (() => {
+      const flat = (v) => (Array.isArray(v) ? v.map(flat).join(" ") : typeof v === "string" ? v : "");
+      const math = (flat([q.q, q.ch || []]).match(/\$[^$]*\$/g) || []).join(" ").replace(/\\[a-zA-Z]+/g, " ");
+      return [...new Set((math.match(/[A-Za-z]/g) || []).concat("xyabktn".split("")))].join("");
+    })();
     if (COACH.reset) COACH.reset(q);
     const layer = document.createElement("div");
     layer.className = "obs-layer";
@@ -49,13 +55,23 @@
     const actX = Object.assign({}, act, { ignoreLine: (key) => { if (T) { T.ignore(key); run(); } } });
     const inBox = (s, b) => { let x = 0, y = 0; for (const p of s.pts) { x += p[0]; y += p[1]; } x /= s.pts.length; y /= s.pts.length; return x >= b.x0 - 1 && x <= b.x1 + 1 && y >= b.y0 - 1 && y <= b.y1 + 1; };
 
-    function askMathpix(L) {
-      if (!(window.MATHINK && MATHINK.enabled) || mp[L.key]) return;
-      if (L.conf >= TRACER.MINC && !L.toks.some((t) => t.k === "var")) return;
+    // 줄 다시 읽기: Mathpix 키가 있으면 Mathpix, 없으면 기기 안 수식 모델(mfr.js, Pix2Text-MFR).
+    // 규칙 인식(linerec)은 흘린 글씨·문자 섞인 식을 못 읽어서(10-20 장준원 영상) 모델이 있으면 모든 줄을 모델로 다시 읽는다
+    function askModel(L) {
+      if (mp[L.key]) return;
+      const viaMP = window.MATHINK && MATHINK.enabled;
+      const viaMFR = !viaMP && window.MFR && !MFR.failed;
+      if (!viaMP && !viaMFR) return;
+      if (viaMP && L.conf >= TRACER.MINC && !L.toks.some((t) => t.k === "var")) return;   // 유료 키는 확신 낮은 줄에만
       mp[L.key] = "wait";
       const strokes = ink.strokes.filter((s) => (!s.tool || s.tool === "pen") && inBox(s, L.box));
-      MATHINK.recognize(strokes).then((tex) => { mp[L.key] = fromLatex(tex, L); COACH.log({ e: "식인식", q: q.id }); run(); })
-        .catch(() => { mp[L.key] = "fail"; });
+      (viaMP ? MATHINK.recognize(strokes) : MFR.recognize(strokes, { letters })).then((tex) => {
+        if (!alive) return;
+        if (!tex) { mp[L.key] = "fail"; return; }
+        const R = fromLatex(tex, L);
+        if (!viaMP) { R.conf = 0.9; R.segs.forEach((g) => { g.conf = 0.9; }); if (R.slip) R.slip.conf = 0.88; R.src = "mfr"; }
+        mp[L.key] = R; COACH.log({ e: "식인식", q: q.id, via: viaMP ? "mathpix" : "mfr" }); run();
+      }).catch(() => { mp[L.key] = "fail"; });
     }
 
     function run() {
@@ -63,7 +79,7 @@
       const got = LINEREC.analyze(ink.strokes);
       if (got.drawing && !drew) { drew = true; COACH.log({ e: "그림", q: q.id }); }   // 코치가 시킨 그리기를 했다
       lines = got.map((L) => (typeof mp[L.key] === "object" ? mp[L.key] : L));
-      lines.forEach(askMathpix);
+      lines.forEach(askModel);
       let ev = T.update(lines);
       if (noSteps) ev = ev.filter((e) => e.t === "slip" || e.t === "final");
       paint();
