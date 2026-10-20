@@ -1,0 +1,70 @@
+/* 코칭(coach.js) — 색은 tokens.css 변수만. 빨강 계열(--retry)은 오답 표시에만. */
+.coach { padding: 14px 16px; display: grid; gap: 8px; border-left: 4px solid var(--accent); animation: pop .3s var(--ease); }
+.coach.is-wrong { border-left-color: var(--retry); }
+.coach.is-ok { border-left-color: var(--correct); }
+.coach.is-quiet { border-left-color: var(--ink-3); }
+.coach-h { display: flex; align-items: center; gap: 8px; }
+.coach-mark { font-size: 13.5px; font-weight: 800; letter-spacing: .02em; padding: 2px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.coach-say { margin: 0; font-size: 16px; line-height: 1.65; font-weight: 600; word-break: keep-all; }
+.coach-sub { margin: 0; font-size: 14px; font-weight: 500; line-height: 1.6; color: var(--ink-2); word-break: keep-all; }
+.coach-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.coach-opts { display: grid; gap: 6px; }
+.coach-opt { text-align: left; font-weight: 500; padding: 10px 12px; border-radius: var(--radius-m); background: var(--surface-2); color: var(--ink); font: inherit; font-size: 14.5px; line-height: 1.5; border: 1.5px solid transparent; cursor: pointer; word-break: keep-all; }
+.coach-opt:hover:not([disabled]) { border-color: var(--accent); }
+.coach-opt[disabled] { cursor: default; }
+.coach-opt.is-correct { border-color: var(--correct); background: var(--correct-soft); }
+.coach-opt.is-wrong { border-color: var(--retry); background: var(--retry-soft); }
+.coach-pre { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13.5px; }
+.coach-pre .pill { text-decoration: none; }
+.dk-btn { justify-self: start; }
+.st-rung .st-q { background: var(--accent-soft); color: var(--accent); }
+
+/* 풀이 관찰(observe.js) — 풀이판 오른쪽 끝의 "이렇게 읽었어요" 표. 필기를 가리지 않게 작고 옅게. */
+.pad { position: relative; }
+.obs-layer { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
+.obs-chip { position: absolute; right: 6px; max-width: 46%; display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent); border: 1px solid var(--line); color: var(--ink-2); font: inherit; font-size: 13.5px;
+  pointer-events: auto; cursor: pointer; white-space: nowrap; overflow: hidden; opacity: .92; }
+.obs-chip .obs-tex { overflow: hidden; text-overflow: ellipsis; }
+.obs-chip .katex { font-size: 1em; }
+.obs-chip b { font-weight: 800; flex: none; }
+.obs-chip.st-reach b, .obs-chip.st-final b, .obs-chip.st-alt b { color: var(--correct); }
+.obs-chip.st-mis, .obs-chip.st-slip { border-color: var(--retry); }
+.obs-chip.st-mis b, .obs-chip.st-slip b { color: var(--retry); }
+.obs-chip.st-ignored { opacity: .5; text-decoration: line-through; }
+.helprow { display: flex; flex-wrap: wrap; gap: 8px; }
+.helprow .stuck-btn { flex: 1 1 auto; }
+/* 오류 종류 배지(문장 대신) — 틀림 색 계열은 오류 표시에만 */
+.coach-kind { display: inline-block; margin-right: 8px; padding: 1px 8px; border-radius: 999px; font-size: 13.5px; font-weight: 800; vertical-align: 2px;
+  background: var(--retry-soft); color: var(--retry); }
+.coach-kind.k-전략 { background: var(--surface-2); color: var(--ink); }
+
+/* 인사이트 카드(insight.js) — 도형·그래프·수직선·표·공식·강의 */
+.ins { margin: 4px 0 0; padding: 10px 12px; border-radius: var(--radius-m); background: var(--surface); border: 1px solid var(--line); display: grid; gap: 6px; }
+.ins-h { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.ins-kind { font-size: 13.5px; font-weight: 800; padding: 1px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.ins-board { width: 100%; height: 220px; border-radius: var(--radius-s); background: var(--surface); }
+.ins-board.jxgbox { border: none; }
+.ins-slider { display: flex; align-items: center; gap: 10px; padding: 4px 4px 6px; }
+.ins-slider input { flex: 1; max-width: 340px; height: 28px; accent-color: var(--accent); }
+.ins-sl-name { min-width: 1.2em; font-size: 16px; }
+.ins-sl-val { min-width: 4em; font-variant-numeric: tabular-nums; }
+.ins-svg { width: 100%; height: 200px; }
+.ins-svg line, .ins-svg polyline { stroke: var(--ink); stroke-width: 2; fill: none; }
+.ins-svg line.hi { stroke: var(--retry); stroke-width: 4; }
+.ins-svg line.ax { stroke: var(--ink-3); stroke-width: 1; }
+.ins-svg circle { fill: var(--ink); }
+.ins-svg text { font-size: 14px; fill: var(--ink); }
+.ins-tex { font-size: 18px; display: grid; gap: 4px; overflow-x: auto; overflow-y: hidden; padding: 6px 0; }   /* overflow-x 만 주면 세로도 auto 가 돼 분수 높이에 스크롤 막대가 생겼다(10-06) */
+.ins-tbl table { border-collapse: collapse; font-size: 14px; }
+.ins-tbl th, .ins-tbl td { border: 1px solid var(--line); padding: 3px 10px; text-align: center; }
+.ins-note { margin: 0; font-size: 14px; font-weight: 700; color: var(--ink); word-break: keep-all; }
+.ins-vid iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: var(--radius-s); }
+.coach-ins { display: grid; gap: 8px; }
+
+/* 끼어들기 전 은은한 신호(오래 고민 초입) */
+.dk-btn.has-hint { position: relative; }
+.dk-btn.has-hint::after { content: ""; position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pop .4s var(--ease); }
+
+/* 틀린 표현 취소선(diff) */
+.coach-strike { color: var(--retry); text-decoration: line-through; text-decoration-thickness: 2px; font-weight: 700; }

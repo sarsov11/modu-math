@@ -1,0 +1,115 @@
+/* 모두의 수학 — 색·글꼴 토큰. 화면 코드에 색을 박지 않는다(스킨이 깨진다).
+   스킨 3안: A 모눈 노트 · B 나이트 아케이드 · C 스티커 팝  (조사/벤치마킹_필기인식_디자인.md 2-4절)
+   [data-skin] 는 <html> 에 붙는다. 명암비는 보고서에서 WCAG 로 잰 값만 글자색으로 쓴다. */
+
+:root {
+  --font-ui: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-display: var(--font-ui);
+  --font-num: var(--font-ui);
+  --radius-s: 10px; --radius-m: 16px; --radius-l: 24px;
+  --gap: 16px;
+  --shadow-card: 0 1px 2px rgba(20, 24, 40, .06), 0 4px 16px rgba(20, 24, 40, .06);
+  --press-depth: 0px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+
+  /* 스킬 갈래 색 (글자 대비 확인한 값) */
+  --g-G: #2563EB; --g-D: #DB2777; --g-N: #9333EA; --g-A: #C2410C;
+  --g-C: #0F766E; --g-S: #15803D; --g-P: #B45309; --g-T: #4F46E5;
+}
+
+/* ───────── A 모눈 노트 ───────── */
+/* 2026-09-29 대표님: "디자인 베이지 맘에 안 들어, 흰 배경 유지" + 취향 규칙(흰 바탕 기본, 파랑 포인트 대신 진녹 #0B5E3C, 틀림 색 #E5322D 하나)
+   → 바탕·면은 흰색, 회색은 중립 회색(베이지 빼기), 포인트 진녹, 틀림 선홍. 바탕 모눈 무늬 없앰(풀이판 모눈은 유지). */
+:root, [data-skin="note"] {
+  --bg: #FFFFFF; --surface: #FFFFFF; --surface-2: #F3F4F6; --line: #E5E7EB;
+  --ink: #1F2430; --ink-2: #4B5563; --ink-3: #6B7280;
+  --accent: #0B5E3C; --accent-ink: #FFFFFF; --accent-soft: #E6F2EC;
+  --hl: #FFD84D; --correct: #1F7A52; --correct-soft: #E3F4EC; --retry: #E5322D; --retry-soft: #FDECEC;
+  --gold: #B7791F;
+  --pad-bg: #FFFFFF; --pad-grid: rgba(31, 36, 48, .07); --pad-ink: #1F2430;
+  --pad-pattern: linear-gradient(var(--pad-grid) 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, var(--pad-grid) 1px, transparent 1px) 0 0 / 24px 24px;
+  --bg-pattern: none;
+  --card-border: 1px solid var(--line);
+  --shadow-card: 0 1px 0 rgba(31,36,48,.04);
+  --radius-m: 14px; --radius-l: 18px;
+  --tab-active: var(--ink);
+  --hero-bg: var(--surface);
+  --display-weight: 800;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-skin="arcade"]):not([data-skin="pop"]),
+  :root:not([data-theme="light"])[data-skin="note"] {
+    --bg: #15171C; --surface: #1E2128; --surface-2: #262A33; --line: #323743;
+    --ink: #EDEEF2; --ink-2: #A9AEBA; --ink-3: #7C8290;
+    --accent: #7E9BFF; --accent-ink: #0B1026; --accent-soft: #232B47;
+    --correct: #5FD39A; --correct-soft: #1C3328; --retry: #FF9A62; --retry-soft: #3A261B; --gold: #F2C14E;
+    --pad-bg: #1A1C22; --pad-grid: rgba(126,155,255,.10); --pad-ink: #DDE4FF;
+    --bg-pattern: none; --tab-active: var(--ink);
+  }
+}
+:root[data-theme="dark"][data-skin="note"] {
+  --bg: #15171C; --surface: #1E2128; --surface-2: #262A33; --line: #323743;
+  --ink: #EDEEF2; --ink-2: #A9AEBA; --ink-3: #7C8290;
+  --accent: #7E9BFF; --accent-ink: #0B1026; --accent-soft: #232B47;
+  --correct: #5FD39A; --correct-soft: #1C3328; --retry: #FF9A62; --retry-soft: #3A261B; --gold: #F2C14E;
+  --pad-bg: #1A1C22; --pad-grid: rgba(126,155,255,.10); --pad-ink: #DDE4FF; --bg-pattern: none;
+}
+
+/* ───────── B 나이트 아케이드 (다크 우선 — 이 스킨은 늘 어둡다) ───────── */
+[data-skin="arcade"] {
+  --font-num: "Galmuri11", var(--font-ui);
+  --font-display: "Galmuri11", var(--font-ui);
+  --bg: #0E1020; --surface: #181B33; --surface-2: #202443; --line: #2C3160;
+  --ink: #EEF0FF; --ink-2: #9AA0C3; --ink-3: #6E74A0;
+  --accent: #8B7CFF; --accent-ink: #FFFFFF; --accent-btn: #6D4AFF; --accent-soft: #272556;
+  --hl: #22D3EE; --correct: #A3E635; --correct-soft: #22331A; --retry: #FF5C93; --retry-soft: #3A1830;
+  --gold: #FFC940;
+  --pad-bg: #0B0D1A; --pad-grid: rgba(34, 211, 238, .08); --pad-ink: #7DF3FF;
+  --pad-pattern: radial-gradient(circle, rgba(139,124,255,.22) 1px, transparent 1.4px) 0 0 / 22px 22px;
+  --bg-pattern: radial-gradient(1200px 600px at 80% -10%, rgba(109,74,255,.25), transparent 60%), radial-gradient(900px 500px at -10% 110%, rgba(34,211,238,.12), transparent 60%);
+  --card-border: 1px solid var(--line);
+  --shadow-card: 0 0 0 1px rgba(139,124,255,.08), 0 8px 30px rgba(0,0,0,.35);
+  --radius-m: 14px; --radius-l: 20px;
+  --tab-active: var(--hl);
+  --hero-bg: linear-gradient(135deg, #231E5C 0%, #181B33 70%);
+  --display-weight: 400;
+  --g-G: #60A5FA; --g-D: #F472B6; --g-N: #C084FC; --g-A: #FB923C;
+  --g-C: #2DD4BF; --g-S: #4ADE80; --g-P: #FBBF24; --g-T: #818CF8;
+  color-scheme: dark;
+}
+
+/* ───────── C 스티커 팝 ───────── */
+[data-skin="pop"] {
+  --font-display: "Jua", var(--font-ui);
+  --bg: #FFFFFF; --surface: #F4F6FB; --surface-2: #E9EDF6; --line: #DDE3EE;
+  --ink: #1E293B; --ink-2: #64748B; --ink-3: #94A3B8;
+  --accent: #2563EB; --accent-ink: #FFFFFF; --accent-soft: #DBEAFE;
+  --hl: #FFC940; --correct: #15803D; --correct-soft: #DCFCE7; --retry: #C2410C; --retry-soft: #FFEDD5;
+  --gold: #B7791F;
+  --pad-bg: #FFFFFF; --pad-grid: rgba(30, 41, 59, .13); --pad-ink: #1E293B;
+  --pad-pattern: radial-gradient(circle, var(--pad-grid) 1.2px, transparent 1.6px) 0 0 / 20px 20px;
+  --bg-pattern: none;
+  --card-border: 2px solid var(--line);
+  --shadow-card: none;
+  --press-depth: 4px;
+  --radius-m: 20px; --radius-l: 28px;
+  --tab-active: var(--accent);
+  --hero-bg: var(--g-G);
+  --display-weight: 400;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-skin="pop"] {
+    --bg: #0F172A; --surface: #1E293B; --surface-2: #273449; --line: #334155;
+    --ink: #F1F5F9; --ink-2: #A5B4C8; --ink-3: #7B8BA3;
+    --accent: #60A5FA; --accent-ink: #0B1220; --accent-soft: #1E3A5F;
+    --correct: #4ADE80; --correct-soft: #173325; --retry: #FB923C; --retry-soft: #3B2414; --gold: #FACC15;
+    --pad-bg: #111a2e; --pad-grid: rgba(241,245,249,.12); --pad-ink: #E2E8F0;
+  }
+}
+:root[data-theme="dark"][data-skin="pop"] {
+  --bg: #0F172A; --surface: #1E293B; --surface-2: #273449; --line: #334155;
+  --ink: #F1F5F9; --ink-2: #A5B4C8; --ink-3: #7B8BA3;
+  --accent: #60A5FA; --accent-ink: #0B1220; --accent-soft: #1E3A5F;
+  --correct: #4ADE80; --correct-soft: #173325; --retry: #FB923C; --retry-soft: #3B2414; --gold: #FACC15;
+  --pad-bg: #111a2e; --pad-grid: rgba(241,245,249,.12); --pad-ink: #E2E8F0;
+}

@@ -1,0 +1,11 @@
+/* 스킬 그림 설명(10-07) — 그림 카드 묶음. 낱말 뜻은 그 말이 나오는 그림 바로 아래 */
+.skfig { margin: 10px 0 4px; }
+.skfig-figs { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.skfig-figs .ins { margin: 0; }
+.skfig .ins-kind { display: none; }
+.skfig-w { margin: 8px 0 0; padding: 8px 10px; border-radius: 8px; background: var(--surface-2); font-size: 13px; line-height: 1.4; }
+.skfig-w > div { display: flex; gap: 8px; }
+.skfig-w > div + div { margin-top: 4px; }
+.skfig-w dt { flex: none; font-weight: 700; color: var(--ink); }
+.skfig-w dd { margin: 0; color: var(--ink-2); }
+.skfig-more { display: inline-block; margin-top: 6px; font-size: 14px; font-weight: 600; color: var(--accent); text-decoration: none; }

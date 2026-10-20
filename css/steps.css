@@ -1,0 +1,109 @@
+/* 기출 4단계 난이도 · 단계 풀이 (2026-09-23)
+   난이도는 막대 4칸 중 몇 칸이 찼는지로 읽는다 — 색만으로 구분하지 않는다. */
+:root { --lv1: #3E8E6A; --lv2: #2F7FB8; --lv3: #C9771C; --lv4: #C8323C; }
+.lv1 { --lvc: var(--lv1); } .lv2 { --lvc: var(--lv2); } .lv3 { --lvc: var(--lv3); } .lv4 { --lvc: var(--lv4); }
+.lvpill { gap: 2px; padding-left: 8px; color: var(--lvc); background: color-mix(in srgb, var(--lvc) 10%, var(--surface)); }
+.lvpill i { width: 4px; height: 11px; border-radius: 2px; background: color-mix(in srgb, var(--ink-3) 35%, transparent); }
+.lvpill i:nth-child(4) { margin-right: 5px; }
+.lvpill.lv1 i:nth-child(-n+1), .lvpill.lv2 i:nth-child(-n+2), .lvpill.lv3 i:nth-child(-n+3), .lvpill.lv4 i:nth-child(-n+4) { background: var(--lvc); }
+
+.seg a { padding: 7px 14px; border-radius: 8px; font-size: 13.5px; font-weight: 700; color: var(--ink-2); }
+.seg a[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.exam-src { margin: 16px 0 0; }
+.lv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--stack-s); margin-top: var(--stack); }
+@media (min-width: 900px) { .lv-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.lv-card { display: grid; gap: 6px; padding: 14px 14px 12px; text-align: left; border-top: 4px solid var(--lvc); color: var(--ink); cursor: pointer; transition: transform .15s var(--ease); font: inherit; }
+.lv-card:hover:not([disabled]) { transform: translateY(-2px); }
+.lv-card[disabled] { opacity: .45; cursor: default; }
+.lv-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 12.5px; }
+.lv-name { font-size: 15.5px; letter-spacing: -0.02em; word-break: keep-all; }
+.lv-sub { font-size: 12.5px; color: var(--ink-3); }
+.lv-sub b { color: var(--ink); }
+.lv-go { font-size: 13px; font-weight: 800; color: var(--lvc); margin-top: 2px; }
+.exam-list { display: grid; padding: 4px 0; overflow: hidden; }
+.exam-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; text-align: left; width: 100%; color: var(--ink); font: inherit; }
+.exam-row + .exam-row { border-top: 1px solid var(--line); }
+.exam-row:hover { background: var(--surface-2); }
+.exam-t { display: grid; gap: 6px; flex: 1; min-width: 0; }
+.exam-t b { font-size: 14.5px; }
+.lvdots { display: flex; gap: 2px; height: 6px; max-width: 220px; }
+.lvdots i { border-radius: 3px; background: var(--lvc); min-width: 0; }
+.exam-n { font-size: 12.5px; white-space: nowrap; }
+.mrow.m4 { grid-template-columns: 42px 1fr auto auto; }
+
+/* ── 단계 풀이 ── */
+.stuck-btn { width: 100%; justify-content: center; gap: 8px; border-style: dashed !important; }
+.st-q { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 99px; background: var(--accent); color: var(--accent-ink); font-size: 12px; font-weight: 900; flex: none; }
+.st-wrap { padding: 16px 16px 14px; }
+.st-loading { padding: 12px; font-size: 13px; }
+.st-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.st-eyebrow { font-size: 12.5px; font-weight: 800; color: var(--accent); letter-spacing: .02em; }
+.st-eyebrow .muted { font-weight: 600; color: var(--ink-3); }
+.st-count { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin-top: 2px; }
+.st-mini { min-height: 34px !important; padding: 0 12px !important; font-size: 13px !important; }
+.st-meter { display: flex; gap: 4px; margin: 14px 0 4px; }
+.st-meter i { flex: 1; height: 6px; border-radius: 9px; background: var(--surface-2); position: relative; }
+.st-meter i.s1 { background: color-mix(in srgb, var(--accent) 35%, var(--surface-2)); }
+.st-meter i.s2 { background: var(--correct); }
+.st-meter i.s3 { background: var(--accent); }
+.st-meter i.crux::after { content: ""; position: absolute; left: 50%; top: -5px; width: 6px; height: 6px; margin-left: -3px; border-radius: 9px; background: var(--retry); }
+.st-plan { margin: 10px 0 2px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); font-size: 14.5px; line-height: 1.7; }
+.st-plan b { color: var(--accent); margin-right: 6px; font-size: 13px; }
+.st-planbtn { margin: 10px 0 2px; font-size: 13px; font-weight: 700; color: var(--accent); padding: 4px 0; }
+.st-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 0; }
+.st { position: relative; display: grid; grid-template-columns: 30px minmax(0, 1fr); column-gap: 12px; padding-bottom: 16px; }
+.st:not(:last-child)::before { content: ""; position: absolute; left: 14px; top: 30px; bottom: 0; width: 2px; background: var(--line); }
+.st.s2:not(:last-child)::before { background: color-mix(in srgb, var(--correct) 50%, var(--line)); }
+.st.s3:not(:last-child)::before { background: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.st-case { grid-column: 1 / -1; margin: 0 0 8px 42px; font-size: 12.5px; font-weight: 800; color: var(--ink-2); padding: 3px 10px; border-radius: 8px; background: var(--surface-2); justify-self: start; }
+.st-no { width: 30px; height: 30px; border-radius: 99px; display: grid; place-items: center; font-size: 13px; font-weight: 800; background: var(--surface-2); color: var(--ink-3); border: 2px solid var(--line); z-index: 1; box-sizing: border-box; }
+.st.s1 .st-no { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.st.s2 .st-no { background: var(--correct); color: #fff; border-color: var(--correct); }
+.st.s3 .st-no { background: var(--surface); color: var(--accent); border-color: var(--accent); }
+.st-card { min-width: 0; padding-top: 4px; }
+.st.s1 .st-card { padding: 10px 12px 12px; border-radius: 14px; background: var(--accent-soft); margin-top: -2px; }
+.st-title { font-weight: 800; font-size: 15px; letter-spacing: -0.01em; line-height: 1.5; word-break: keep-all; }
+.st-title.dim { color: var(--ink-3); font-weight: 700; }
+.st-hint { display: flex; gap: 8px; align-items: flex-start; font-size: 15px; line-height: 1.7; margin-top: 4px; word-break: keep-all; }
+.st-hint .st-q { margin-top: 3px; }
+.st-eqs { margin: 8px 0 4px; padding: 6px 12px; border-left: 3px solid var(--accent); background: color-mix(in srgb, var(--surface-2) 60%, transparent); border-radius: 0 10px 10px 0; display: grid; gap: 0; }
+[data-skin="note"] .st-eqs { border-left-color: var(--gold); background: color-mix(in srgb, var(--hl) 14%, var(--surface)); }
+.st-tex { font-size: 16px; line-height: 1.9; overflow-x: auto; overflow-y: hidden; }
+.st-tex .katex { font-size: 1.08em; }
+.st-why { font-size: 14px; line-height: 1.75; color: var(--ink-2); margin-top: 4px; word-break: keep-all; }
+.st-fig { display: block; max-width: min(100%, 360px); margin: 8px 0; border-radius: 10px; border: 1px solid var(--line); background: #fff; }
+.st-how { margin-top: 6px; font-size: 13px; font-weight: 800; color: var(--accent); padding: 2px 0; }
+.st-how .muted { font-weight: 600; color: var(--ink-3); margin-left: 4px; }
+.st-sub { margin: 6px 0 0; padding: 8px 12px 8px 30px; border-radius: 10px; background: var(--surface-2); font-size: 14px; }
+.st-sub li { margin: 4px 0; }
+.st-foot { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.st-skill { font-size: 12px; }
+.st-skill b { margin-right: 2px; }
+.st-crux { background: var(--retry-soft); color: var(--retry); font-size: 12px; }
+.st-self { margin-top: 6px; font-size: 12.5px; font-weight: 800; color: var(--correct); }
+.st-acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; justify-content: flex-end; }
+.st-check { margin-top: 10px; }
+.st-checklab { font-size: 12.5px; font-weight: 700; color: var(--ink-2); margin-bottom: 6px; }
+.st-strip { height: 84px !important; min-height: 84px; background: var(--surface); }
+.st-checkrow { display: flex; align-items: center; gap: 8px; justify-content: space-between; margin-top: 6px; }
+.st-read { font-size: 13.5px; font-weight: 700; }
+.st-read.ok { color: var(--correct); }
+.st-read.no { color: var(--retry); }
+.st-end { margin-top: 4px; padding: 10px 12px; border-radius: 12px; background: var(--correct-soft); color: var(--correct); font-weight: 800; font-size: 14px; }
+.stuck-note .btn { margin-left: 6px; vertical-align: middle; }
+[data-skin="arcade"] .st-count { font-family: var(--font-num); }
+
+/* ── 강의 해설 (EBSi 자막 · 어피셜 영상, 2026-09-24) ── */
+.st-lec { margin: 12px 0 2px; padding: 12px 14px; border-radius: 14px; border: 1.5px solid color-mix(in srgb, var(--accent) 30%, var(--line)); background: color-mix(in srgb, var(--accent-soft) 45%, var(--surface)); display: grid; gap: 6px; }
+.st-lec-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; font-size: 13px; }
+.st-lec-h b { color: var(--accent); font-size: 13.5px; }
+.st-lec-h .muted { font-size: 12px; color: var(--ink-3); }
+.st-lec-pt { font-size: 14.5px; line-height: 1.7; word-break: keep-all; }
+.st-lec-tip { font-size: 13.5px; color: var(--ink-2); padding-left: 10px; border-left: 3px solid var(--gold); }
+.st-lec-alt summary { cursor: pointer; font-size: 13px; font-weight: 800; color: var(--accent); }
+.st-lec-alt div { font-size: 13.5px; line-height: 1.7; color: var(--ink-2); margin-top: 4px; }
+.st-lec-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.st-yt { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #000; }
+.st-yt iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.st-lw { margin-top: 6px; font-size: 13px; color: var(--ink-2); display: flex; gap: 8px; align-items: baseline; }
+.st-lt { flex: none; font-size: 11.5px; font-weight: 800; color: var(--accent); background: var(--accent-soft); padding: 1px 7px; border-radius: 6px; }
