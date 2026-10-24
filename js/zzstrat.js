@@ -23,17 +23,17 @@
     ko: { btn: "합격전략", next: "다음", end: "닫기", skip: "건너뛰기", close: "닫기", tour: "짚어 보기", abs: "절대평가", rel: "상대평가",
       line: "합격선", goal: "목표", cut: "최근 합격선", bonus: "가산점", fail: "과락", sum: "과목 목표를 더하면", subj: "과목", strat: "전략", def: "방어", base: "기본",
       why: "왜", hold: "여기까지는 맞힌다", drop: "버려도 되는 문항", ex: "기출로 보기", must: "필수", fight: "승부", skipq: "버림", ans: "정답", order: "시험장에서",
-      rate: "합격률", writ: "필기", prac: "실기", src: "출처", rep: "반복 출제", newq: "신출", range: "범위", start: "시작",
+      rate: "합격률", writ: "필기", prac: "실기", vid: "근거 영상", src: "출처", rep: "반복 출제", newq: "신출", range: "범위", start: "시작",
       pick: "목표 고르기", gcut: "등급컷", passz: "합격", failz: "불합격", tiers: "공부 범위", m_all: "공부", m_lite: "간단히", m_guess: "찍기", pt: "점" },
     ja: { btn: "合格戦略", next: "次へ", end: "閉じる", skip: "スキップ", close: "閉じる", tour: "ガイドを見る", abs: "絶対評価", rel: "相対評価",
       line: "合格ライン", goal: "目標", cut: "最近の合格ライン", bonus: "加点", fail: "足切り", sum: "科目目標の合計", subj: "科目", strat: "得点源", def: "守り", base: "基本",
       why: "理由", hold: "ここまでは必ず取る", drop: "捨ててよい問題", ex: "過去問で見る", must: "必須", fight: "勝負", skipq: "捨て", ans: "正解", order: "試験当日",
-      rate: "合格率", writ: "筆記", prac: "実技", src: "出典", rep: "再出題", newq: "新出", range: "範囲", start: "はじめる",
+      rate: "合格率", writ: "筆記", prac: "実技", vid: "根拠の動画", src: "出典", rep: "再出題", newq: "新出", range: "範囲", start: "はじめる",
       pick: "目標を選ぶ", gcut: "等級ライン", passz: "合格", failz: "不合格", tiers: "学習範囲", m_all: "学習", m_lite: "軽く", m_guess: "勘で", pt: "点" },
     en: { btn: "Pass plan", next: "Next", end: "Close", skip: "Skip", close: "Close", tour: "Guided tour", abs: "Fixed cutoff", rel: "Curved / ranked",
       line: "Pass line", goal: "Target", cut: "Recent cutoffs", bonus: "Bonus points", fail: "Minimum per section", sum: "Section targets add up to", subj: "Sections", strat: "Score", def: "Defend", base: "Core",
       why: "Why", hold: "Must-get level", drop: "Questions to skip", ex: "From past exams", must: "Must", fight: "Decider", skipq: "Skip", ans: "Answer", order: "On exam day",
-      rate: "Pass rate", writ: "Written", prac: "Practical", src: "Sources", rep: "Repeat rate", newq: "New", range: "Scope", start: "Start",
+      rate: "Pass rate", writ: "Written", prac: "Practical", vid: "Evidence videos", src: "Sources", rep: "Repeat rate", newq: "New", range: "Scope", start: "Start",
       pick: "Pick your target", gcut: "Grade cuts", passz: "Pass", failz: "Fail", tiers: "Study scope", m_all: "Study", m_lite: "Skim", m_guess: "Guess", pt: "" }
   }[LANG];
   var ROLE = { "전략": "s", "방어": "d", "기본": "b" }, VERD = { "필수": "m", "승부": "f", "버림": "x" };
@@ -100,7 +100,7 @@
     "#zs .gauge .fl{position:absolute;left:0;top:0;bottom:0;border-radius:9px 0 0 9px;background:repeating-linear-gradient(45deg,#F3D9DA 0 6px,#FBEDEE 6px 12px)}",
     "#zs .gauge .rg{position:absolute;top:0;bottom:0;background:rgba(183,121,31,.28)}",
     "#zs .gauge .rl{position:absolute;bottom:calc(100% + 10px);transform:translateX(-50%);white-space:nowrap;font:800 12px/1 system-ui,sans-serif;color:var(--zs-gold)}",
-    "#zs .gauge .ax{position:absolute;top:calc(100% + 8px);font:700 11px/1 system-ui,sans-serif;color:#A0A4AE}",
+    "#zs .gauge .ax{position:absolute;top:calc(100% + 8px);font:700 12px/1 system-ui,sans-serif;color:#A0A4AE}",
     "#zs .gauge .mk{position:absolute;top:-6px;bottom:-6px;width:2px;background:#9EA3AD}",
     "#zs .gauge .gl{position:absolute;top:-10px;bottom:-10px;width:4px;margin-left:-2px;background:var(--zs-red);border-radius:3px;box-shadow:0 0 0 4px rgba(225,16,28,.15);transition:left .4s cubic-bezier(.2,1,.3,1)}",
     "#zs .gauge .gl span{position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;font:900 14px/1 system-ui,sans-serif;color:var(--zs-red);background:var(--zs-card);padding:0 4px}",
@@ -108,7 +108,7 @@
     "#zs table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}#zs td,#zs th{padding:8px 6px;border-top:1px solid var(--zs-line);text-align:left;vertical-align:top}",
     "#zs th{color:var(--zs-sub);font-weight:700;font-size:12.5px}#zs td.n{font-weight:800;white-space:nowrap}#zs td .mu{color:#8A8F9A}",
     "#zs .stack{display:flex;height:30px;border-radius:9px;overflow:hidden;margin:10px 0 6px;background:#ECE9E2}",
-    "#zs .stack i{display:flex;align-items:center;justify-content:center;font:800 11.5px/1 system-ui,sans-serif;color:#fff;font-style:normal;border-right:2px solid var(--zs-card);overflow:hidden;white-space:nowrap;min-width:0;transition:width .4s}",
+    "#zs .stack i{display:flex;align-items:center;justify-content:center;font:800 12px/1 system-ui,sans-serif;color:#fff;font-style:normal;border-right:2px solid var(--zs-card);overflow:hidden;white-space:nowrap;min-width:0;transition:width .4s}",
     "#zs .stack i.s{background:var(--zs-red)}#zs .stack i.d{background:var(--zs-blue)}#zs .stack i.b{background:#8A8F9A}",
     /* 점수 그래프 A·B·C */
     "#zs .gw{padding:6px 0 0;margin:10px 0 6px}",
@@ -118,7 +118,7 @@
     "#zs .ga .f{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(-45deg,var(--c) 0 3px,transparent 3px 8px);opacity:.55}",
     "#zs .ga .ticks{position:relative;height:58px}",
     "#zs .ga .tk{position:absolute;top:8px;transform:translateX(-50%);font:800 12px/1 system-ui,sans-serif;white-space:nowrap}#zs .ga .tk.dn{top:26px}",
-    "#zs .ga .ax{position:absolute;top:44px;font:700 11px/1 system-ui,sans-serif;color:#A0A4AE}#zs .ga .ax.l{left:0}#zs .ga .ax.r{right:0}",
+    "#zs .ga .ax{position:absolute;top:44px;font:700 12px/1 system-ui,sans-serif;color:#A0A4AE}#zs .ga .ax.l{left:0}#zs .ga .ax.r{right:0}",
     "#zs .gp{position:absolute;top:0;transform:translateX(-50%);z-index:2;transition:left .4s cubic-bezier(.2,1,.3,1)}",
     "#zs .gp b{display:block;background:var(--zs-tx);color:#fff;font:900 12.5px/1 system-ui,sans-serif;padding:7px 9px;border-radius:8px;white-space:nowrap}",
     "#zs .gp::after{content:'';position:absolute;left:50%;top:100%;margin-left:-1.5px;width:3px;height:52px;background:var(--zs-tx)}",
@@ -126,8 +126,8 @@
     "#zs .gb .rw{display:flex;align-items:center;min-height:38px;padding:3px 0}#zs .gb .rn{flex:none;width:var(--lw);font-weight:700;font-size:12px;line-height:1.25;color:#4A4F5C;padding-right:8px;word-break:keep-all}",
     "#zs .gb .tr{position:relative;flex:1;align-self:stretch;min-height:32px}#zs .gb .ln{position:absolute;left:0;right:0;top:50%;height:2px;background:#E5E2DA}",
     "#zs .gb .dt{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.08)}",
-    "#zs .gb .dt s{position:absolute;bottom:13px;left:50%;transform:translateX(-50%);text-decoration:none;font:800 11px/1 system-ui,sans-serif;color:#4A4F5C;white-space:nowrap}",
-    "#zs .gb .rw.ax{height:18px}#zs .gb .rw.ax s{position:absolute;top:0;text-decoration:none;font:700 11px/1 system-ui,sans-serif;color:#A0A4AE}",
+    "#zs .gb .dt s{position:absolute;bottom:13px;left:50%;transform:translateX(-50%);text-decoration:none;font:800 12px/1 system-ui,sans-serif;color:#4A4F5C;white-space:nowrap}",
+    "#zs .gb .rw.ax{height:18px}#zs .gb .rw.ax s{position:absolute;top:0;text-decoration:none;font:700 12px/1 system-ui,sans-serif;color:#A0A4AE}",
     "#zs .gb .gline{position:absolute;top:0;bottom:46px;width:0;border-left:2.5px dashed var(--zs-red);z-index:1}",
     "#zs .gb .gline b{position:absolute;top:0;left:50%;transform:translate(-50%,-2px);background:var(--zs-red);color:#fff;font:900 12px/1 system-ui,sans-serif;padding:6px 8px;border-radius:7px;white-space:nowrap}",
     "#zs .gb .lg{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;font:700 12px/1 system-ui,sans-serif;color:#4A4F5C}#zs .gb .lg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}",
@@ -140,7 +140,7 @@
     "#zs .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}",
     "#zs .sc{position:relative;background:var(--zs-card);border:2px solid var(--zs-line);border-radius:16px;padding:14px 14px 12px;cursor:pointer;text-align:left;color:inherit;font:inherit;width:100%}",
     "#zs .sc.s{border-color:rgba(225,16,28,.45)}#zs .sc.d{border-color:rgba(37,99,235,.45)}#zs .sc.on{background:#FBFAF7}",
-    "#zs .sc .rb{position:absolute;top:12px;right:12px;font:900 11.5px/1 system-ui,sans-serif;padding:5px 8px;border-radius:7px}",
+    "#zs .sc .rb{position:absolute;top:12px;right:12px;font:900 12px/1 system-ui,sans-serif;padding:5px 8px;border-radius:7px}",
     "#zs .sc.s .rb{background:var(--zs-red);color:#fff}#zs .sc.d .rb{background:var(--zs-blue);color:#fff}#zs .sc.b .rb{background:var(--zs-soft);color:#4A4F5C}",
     "#zs .sc .sn{font:800 16.5px/1.3 inherit;padding-right:56px;word-break:keep-all}",
     "#zs .sc .sg{font:900 26px/1 system-ui,sans-serif;margin:12px 0 4px}#zs .sc .sg small{font:700 13px/1 inherit;color:var(--zs-sub)}",
@@ -159,13 +159,18 @@
     "#zs .q .qs{font:700 12px/1.3 system-ui,sans-serif;color:#7A7F8A;margin-bottom:8px;padding-right:72px}",
     "#zs .q .qt{font-weight:700;margin:0 0 8px;word-break:keep-all}#zs .q ol{margin:0;padding-left:0;list-style:none;counter-reset:o}",
     "#zs .q li{counter-increment:o;padding:3px 0 3px 26px;position:relative;font-size:14.5px}",
-    "#zs .q li::before{content:counter(o);position:absolute;left:0;top:5px;width:18px;height:18px;border-radius:50%;border:1.5px solid #8A8F98;font:700 11px/16px system-ui;text-align:center}",
+    "#zs .q li::before{content:counter(o);position:absolute;left:0;top:5px;width:18px;height:18px;border-radius:50%;border:1.5px solid #8A8F98;font:700 12px/16px system-ui;text-align:center}",
     "#zs .q li.a::before{background:#16181D;color:#fff;border-color:#16181D}",
     "#zs .q .st{position:absolute;top:12px;right:12px;font:900 14px/1 inherit;padding:7px 10px;border-radius:8px;border:2.5px solid;transform:rotate(-4deg)}",
     "#zs .q .st.m{color:#0E8F57;border-color:#0E8F57}#zs .q .st.f{color:#C47A00;border-color:#C47A00}#zs .q .st.x{color:#8A8F98;border-color:#8A8F98}",
     "#zs .q.x .qt,#zs .q.x ol{opacity:.55}",
     "#zs .q .qe{margin:10px 0 0;padding:10px 0 0;border-top:1px dashed #D9D5CB;font-size:14px;word-break:keep-all}",
     "#zs ol.ord{margin:0;padding-left:20px}#zs ol.ord li{margin:0 0 6px}",
+    "#zs .vl{list-style:none;margin:0;padding:0}#zs .vl li{border-top:1px solid var(--zs-line)}#zs .vl li:first-child{border-top:0}",
+    "#zs .vl a,#zs .vl span{display:block;padding:10px 0 10px 28px;position:relative;color:inherit;text-decoration:none}",
+    "#zs .vl i{position:absolute;left:0;top:11px;width:20px;height:20px;border-radius:6px;background:#E1101C;color:#fff;font:900 12px/20px system-ui;text-align:center;font-style:normal}",
+    "#zs .vl b{display:block;font:800 13.5px/1.35 inherit}#zs .vl em{display:block;font-style:normal;font-size:14px;color:#3A3E48;margin-top:2px;word-break:keep-all}",
+    "#zs .vl.sm a,#zs .vl.sm span{padding:7px 0 7px 26px}#zs .vl.sm i{top:8px}#zs .vl.sm em{font-size:13.5px}",
     "#zs .src{font-size:12px;color:#8A8F9A;margin-top:18px;word-break:break-all}",
     "#zs .go{display:block;width:100%;margin:22px 0 0;background:var(--zs-red);color:#fff;border:0;border-radius:14px;padding:16px;font:900 17px/1 inherit;cursor:pointer}",
     /* 스포트라이트 */
@@ -342,6 +347,14 @@
     });
     return o + '</div></section>';
   }
+  /* 근거 영상(10-25 대입 창: 데이터의 근거영상 칸을 학생 화면에도) — 누구 · 요지, 누르면 유튜브 */
+  function vidHTML(list, small) {
+    if (!list || !list.length) return "";
+    return '<ul class="vl' + (small ? ' sm' : '') + '">' + list.map(function (v) {
+      var u = String(v.url || ""); if (!/^https:\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(u)) u = "";
+      return '<li>' + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' : '<span>') + '<i>▶</i><b>' + esc(v.누구 || "") + '</b>' + (v.요지 ? '<em>' + esc(v.요지) + '</em>' : '') + (u ? '</a>' : '</span>') + '</li>';
+    }).join("") + '</ul>';
+  }
   function qHTML(q) {
     var v = VERD[q.판정] || "f", ans = num(q.정답);
     var o = '<div class="q ' + v + '" data-zs="q-' + v + '"><div class="st ' + v + '">' + ({ m: L.must, f: L.fight, x: L.skipq })[v] + '</div>';
@@ -367,6 +380,7 @@
     if (s.이유) o += '<div class="kv" data-zs="why-' + i + '"><b>' + L.why + '</b><p>' + esc(s.이유) + '</p></div>';
     if (s.선) o += '<div class="kv hold" data-zs="hold-' + i + '"><b>' + L.hold + '</b><p>' + esc(s.선) + '</p></div>';
     if (s.버림) o += '<div class="kv"><b>' + L.drop + '</b><p>' + esc(s.버림) + '</p></div>';
+    if (s.근거영상 && s.근거영상.length) o += '<div class="kv"><b>' + L.vid + '</b>' + vidHTML(s.근거영상, 1) + '</div>';
     if (s.예시 && s.예시.length) o += '<div class="kv" style="margin:0"><b>' + L.ex + '</b></div>' + s.예시.map(qHTML).join("");
     return o + '</div>';
   }
@@ -415,6 +429,7 @@
     }
     if (d.순서 && d.순서.length) o += '<section><h2>' + L.order + '</h2><ol class="ord">' + d.순서.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") + '</ol></section>';
     o += '<button type="button" class="go">' + L.start + '</button>';
+    if (d.근거영상 && d.근거영상.length) o += '<section data-zs="vids"><h2>' + L.vid + '</h2>' + vidHTML(d.근거영상) + '</section>';
     if (d.출처 && d.출처.length) o += '<div class="src">' + L.src + ' · ' + d.출처.map(esc).join(" · ") + '</div>';
     return o + '</div>';
   }
