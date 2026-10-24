@@ -373,6 +373,10 @@
     const q = BYID.get(SESSION.ids[SESSION.i]);
     const wide = window.innerWidth >= 1000;
     const st = { choice: null, conf: null, tries: 0, t0: Date.now(), mode: "hand", keyed: "" };
+    // 풀이판에 문항 그림 깔기(2026-10-23 대표님 「그래프 그대로 그려놔야 편하지」) — 발문·박스 안 그림을 모은다
+    const figs = [];
+    (function walk(list) { (list || []).forEach((b) => { if (!Array.isArray(b)) return; if (b[0] === "fig") figs.push((q.fb || "") + b[1]); else if (b[0] === "box") walk(b[1]); }); })(q.q);
+    let figAt = 0;
     const title = SESSION.meta.kind === "skill" ? `${SESSION.meta.id} ${SK.get(SESSION.meta.id).이름}` : SESSION.meta.title;
     view().innerHTML = `<div class="solve">
       <div class="solve-top"><a class="iconbtn" href="#/today" aria-label="나가기">${I.back}</a>
@@ -400,11 +404,12 @@
             <button class="tool" data-act="undo" aria-label="되돌리기">${I.undo}</button>
             <button class="tool" data-act="redo" aria-label="다시">${I.redo}</button>
             <button class="tool" data-act="clear" aria-label="모두 지우기">${I.trash}</button>
-            <button class="tool" data-act="axes" aria-pressed="${q.g ? "true" : "false"}" aria-label="좌표축 깔기" title="좌표축 깔기 — 그래프를 그려 보며 풀기"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 20h17M4 20V3M4 20l14-14"/></svg></button>
+            <button class="tool" data-act="axes" aria-pressed="${q.g && !figs.length ? "true" : "false"}" aria-label="좌표축 깔기" title="좌표축 깔기 — 그래프를 그려 보며 풀기"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 20h17M4 20V3M4 20l14-14"/></svg></button>
+            ${figs.length ? `<button class="tool" data-act="fig" aria-pressed="true" aria-label="문항 그림 깔기" title="문항 그림 깔기 — 그림 위에 바로 칠하고 적기${figs.length > 1 ? " · 누를 때마다 다음 그림" : ""}"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.6"/></svg>${figs.length > 1 ? `<i class="fig-n">1</i>` : ""}</button>` : ""}
             <span class="lbl">풀이 공간 · 휘갈기면 지워져요</span>
             <button class="tool" data-act="read" aria-label="풀이 글자로 옮기기" title="풀이를 활자로 옮기기(설정에서 인식 키 필요)" style="width:auto;padding:0 10px;font-size:12.5px;font-weight:800">식 읽기</button>
           </div>
-          <div class="pad ${q.g ? "axes" : ""}" id="pad"><svg class="axes-layer" aria-hidden="true"><line x1="0" y1="50%" x2="100%" y2="50%"/><line x1="50%" y1="0" x2="50%" y2="100%"/><text x="100%" dx="-14" y="50%" dy="-6">x</text><text x="50%" dx="6" y="16">y</text><text x="50%" dx="-13" y="50%" dy="15">O</text></svg></div>
+          <div class="pad ${q.g && !figs.length ? "axes" : ""} ${figs.length ? "has-fig" : ""}" id="pad">${figs.length ? `<img class="pad-fig" alt="" aria-hidden="true" draggable="false" src="${esc(figs[0])}">` : ""}<svg class="axes-layer" aria-hidden="true"><line x1="0" y1="50%" x2="100%" y2="50%"/><line x1="50%" y1="0" x2="50%" y2="100%"/><text x="100%" dx="-14" y="50%" dy="-6">x</text><text x="50%" dx="6" y="16">y</text><text x="50%" dx="-13" y="50%" dy="15">O</text></svg></div>
           <div id="padread" class="qtext" style="padding:0 14px"></div>
         </div>
       </div></div>`;
@@ -440,7 +445,12 @@
     COACH.load(q).then(() => { if (!st.done && coachHost.isConnected) { stopIdle = COACH.watchIdle(coachHost, q, act); window.__coachStop = () => stopIdle(); } });
     st.coach = { host: coachHost, act, stopIdle: () => stopIdle() };
     view().querySelectorAll("[data-tool]").forEach((b) => b.onclick = () => { ink.setTool(b.dataset.tool); view().querySelectorAll("[data-tool]").forEach((x) => x.setAttribute("aria-pressed", x === b)); });
-    view().querySelectorAll("[data-act]").forEach((b) => b.onclick = () => ({ undo: () => ink.undo(), redo: () => ink.redoOne(), clear: () => ink.clear(), read: () => readPad(ink), axes: () => { const on = $("#pad").classList.toggle("axes"); view().querySelector('[data-act="axes"]').setAttribute("aria-pressed", on); } })[b.dataset.act]());
+    view().querySelectorAll("[data-act]").forEach((b) => b.onclick = () => ({ undo: () => ink.undo(), redo: () => ink.redoOne(), clear: () => ink.clear(), read: () => readPad(ink), axes: () => { const on = $("#pad").classList.toggle("axes"); view().querySelector('[data-act="axes"]').setAttribute("aria-pressed", on); },
+      // 그림 한 장이면 켜고 끄기, 여러 장이면 1→2→…→끄기→1 순으로 돈다. 획은 그대로 둔다
+      fig: () => { const pad = $("#pad"), btn = view().querySelector('[data-act="fig"]'), on = pad.classList.contains("has-fig");
+        if (!on) figAt = 0; else if (figAt + 1 < figs.length) figAt++; else figAt = -1;
+        pad.classList.toggle("has-fig", figAt >= 0); btn.setAttribute("aria-pressed", figAt >= 0);
+        if (figAt >= 0) { pad.querySelector(".pad-fig").src = figs[figAt]; const n = btn.querySelector(".fig-n"); if (n) n.textContent = figAt + 1; } } })[b.dataset.act]());
 
     const showConf = (on) => { $("#confwrap").hidden = !on; };
     if (q.k === "choice") {

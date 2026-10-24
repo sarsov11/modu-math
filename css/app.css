@@ -360,3 +360,13 @@ a { color: var(--accent); text-decoration: none; }
 .oops b { color: var(--retry); margin-right: 6px; }
 .chips-link a { padding: 6px 10px; border-radius: 10px; background: var(--surface-2); font-size: 13px; font-weight: 600; color: var(--ink); }
 .chips-link a b { color: var(--gc, var(--accent)); margin-right: 2px; }
+
+/* 풀이판 문항 그림(2026-10-23) — 획 아래에 흐리게 깐다. 지우개·되돌리기는 획만 건드린다 */
+.pad-fig { position: absolute; inset: 10px; width: calc(100% - 20px); height: calc(100% - 20px); object-fit: contain; pointer-events: none; opacity: 0; mix-blend-mode: multiply; transition: opacity .2s; }
+.pad.has-fig .pad-fig { opacity: .6; }
+.pad canvas { z-index: 1; }
+:root[data-theme="dark"] .pad-fig, [data-skin="arcade"] .pad-fig { filter: invert(.92) hue-rotate(180deg); mix-blend-mode: screen; }
+.padbar .tool[data-act="fig"] { position: relative; }
+.padbar .tool[data-act="fig"][aria-pressed="true"] { background: color-mix(in srgb, var(--g-G) 16%, transparent); color: var(--g-G); }
+.padbar .fig-n { position: absolute; right: 3px; bottom: 2px; font-size: 10px; font-weight: 800; font-style: normal; line-height: 1; }
+@media (max-width: 559px) { .padbar { gap: 1px; padding: 8px 6px; } .padbar .tool { width: 34px; } .padbar .sep { margin: 0 2px; } }
