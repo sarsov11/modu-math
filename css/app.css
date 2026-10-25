@@ -370,3 +370,7 @@ a { color: var(--accent); text-decoration: none; }
 .padbar .tool[data-act="fig"][aria-pressed="true"] { background: color-mix(in srgb, var(--g-G) 16%, transparent); color: var(--g-G); }
 .padbar .fig-n { position: absolute; right: 3px; bottom: 2px; font-size: 10px; font-weight: 800; font-style: normal; line-height: 1; }
 @media (max-width: 559px) { .padbar { gap: 1px; padding: 8px 6px; } .padbar .tool { width: 34px; } .padbar .sep { margin: 0 2px; } }
+/* <보기> 이름표 — 줄로 끊은 보기 상자 머리(10-25 보기검수) */
+.qbox .bogi-h { text-align: center; font-weight: 700; color: var(--ink-2); margin: 0 0 6px; letter-spacing: .1em; }
+.qbox p { margin: 0 0 4px; }
+.qbox p:last-child { margin-bottom: 0; }

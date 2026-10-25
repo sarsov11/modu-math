@@ -56,32 +56,66 @@
     return html;
   }
 
-  function blocks(list, figBase) {
+  function blocks(list, figBase, inBox) {
     if (!list) return "";
-    return list.map((b) => block(b, figBase)).join("");
+    return list.map((b) => block(b, figBase, inBox)).join("");
   }
-  // 두 단으로 놓였던 <보기>가 한 줄로 붙어 온 것('$y=-5x+3$ㄴ. $y=…$')을 ㄱ·ㄴ·ㄷ 앞에서 끊는다(10-07, 은행 118문항). 수식 안은 건드리지 않는다
-  function jamoSplit(s) {
-    s = String(s);
-    const out = [];
-    let from = 0, math = false;
+  // 한 문단으로 붙어 온 <보기>·조건·사건 정의를 줄로 끊는다(10-07 ㄱㄴㄷ 118문항 → 10-25 보기검수 공통 규칙). 수식 안은 건드리지 않는다.
+  //  ㄱ. ㄴ. 앞 — 어디서나. 「<보기>」 이름표 — 어디서나 제 줄로.
+  //  (가)(나)…·㉠㉡…·「$A$ :」 — 상자 안 문단이 그 표지로 시작할 때만, 다음 차례 표지 앞에서(빈칸 채우기 (가)는 안 끊긴다)
+  const GA = "가나다라마바사아자차", CIR = "㉠㉡㉢㉣㉤㉥㉦㉧㉨㉩㉪㉫㉬㉭";
+  function lineSplit(s, inBox) {
+    s = String(s).replace(/\$\\text\{([ㄱ-ㅎ])\}\$/g, "$1")   // 「$\text{ㄱ}$. …」 꼴 보기 머리
+      .replace(/(^|\s)[〈<＜\[]\s*보\s*기\s*[〉>＞\]](?=\s*(ㄱ\s*[.．]|㉠|\(가\)|$))/g, "$1<보기>");   // 〈보기〉·[보 기] 이름표를 한 꼴로
+
+    const cuts = [];
+    const head = s.replace(/^\s*<보기>\s*/, "");
+    let gaNext = inBox && /^\(가\)/.test(head) ? 1 : -1;
+    let cirNext = inBox && /^㉠\s+[^,，\s]/.test(head) ? 1 : -1;   // 「㉠, ㉡, ㉢에서」 같은 증명 글은 끊지 않는다
+    const defMode = inBox && /^\$[A-Z]\$\s*[:：]/.test(head);
+    let math = false;
     for (let i = 0; i < s.length; i++) {
       const c = s[i];
       if (c === "\\") { i++; continue; }
-      if (c === "$") { math = !math; continue; }
-      if (math || i === 0 || !/[ㄱ-ㅎ]/.test(c) || s[i + 1] !== "." || !/[\s$]/.test(s[i + 2] || "")) continue;
-      if (/[\s,(ㄱ-ㅎ]/.test(s[i - 1])) continue;
-      out.push(s.slice(from, i));
-      from = i;
+      if (c === "$") {
+        if (!math && defMode && i > 0 && /^\$[A-Z]\$\s*[:：]/.test(s.slice(i)) && /\s/.test(s[i - 1])) cuts.push(i);
+        math = !math; continue;
+      }
+      if (math) continue;
+      const prev = s[i - 1] || "";
+      if (s.startsWith("<보기>", i) && /^\s*(ㄱ\s*[.．]|㉠|\(가\)|$)/.test(s.slice(i + 4))) { if (i > 0) cuts.push(i); cuts.push(i + 4); continue; }   // 발문 속 「<보기>에서」는 그대로
+      if (i > 0 && /[ㄱ-ㅎ]/.test(c) && s[i + 1] === "." && /[\s$]/.test(s[i + 2] || "") && !/[(\[A-Za-zㄱ-ㅎ,]/.test(prev)) { cuts.push(i); continue; }
+      if (gaNext > 0 && gaNext < GA.length && s.startsWith("(" + GA[gaNext] + ")", i) && /[\s.$]/.test(prev)) { cuts.push(i); gaNext++; continue; }
+      if (cirNext > 0 && cirNext < CIR.length && c === CIR[cirNext] && /\s/.test(s[i + 1] || "")) { cuts.push(i); cirNext++; continue; }
     }
+    const out = [];
+    let from = 0;
+    for (const k of [...new Set(cuts)].sort((x, y) => x - y)) { if (k > from) out.push(s.slice(from, k)); from = Math.max(from, k); }
     out.push(s.slice(from));
-    return out;
+    return out.map((t) => t.trim()).filter(Boolean);
   }
-  function block(b, figBase) {
+  // HWP 보기 상자가 표로 들어온 것(머리 칸 「〈 보 기 〉」 + 긴 글 칸) — 표로 그리면 ㄱ·ㄴ·ㄷ 이 한 칸에 뭉친다
+  const BOGI_HEAD = /^\s*[〈<＜\[|(]?\s*(보\s*기|조\s*건)\s*[〉>＞\]|)]?\s*$/;
+  const BOX_START = /^\s*(ㄱ\s*[.．]|\(가\)|㉠)/;
+  function isBogiTable(v) {
+    if (!Array.isArray(v)) return false;
+    const cells = v.flat().map((c) => String(c || "").trim()).filter(Boolean);
+    if (cells.some((c) => BOGI_HEAD.test(c)) && cells.some((c) => BOX_START.test(c))) return true;
+    return cells.length <= 2 && cells.some((c) => BOX_START.test(c) && c.length > 30);   // 머리 없이 긴 글 한 칸뿐인 틀 표
+  }
+  function bogiTable(v, figBase) {
+    const cells = v.flat().map((c) => String(c || "").trim()).filter(Boolean);
+    const body = cells.filter((c) => !BOGI_HEAD.test(c));
+    const head = cells.find((c) => BOGI_HEAD.test(c));
+    const name = /^\s*ㄱ\s*[.．]/.test(body[0] || "") ? "보기" : head ? head.replace(/[^가-힣]/g, "") : "";
+    return `<div class="qbox">${name ? `<p class="bogi-h">&lt;${name}&gt;</p>` : ""}${body.map((c) => block(["p", c], figBase, true)).join("")}</div>`;
+  }
+  function block(b, figBase, inBox) {
     const [k, v] = b;
-    if (k === "p") return jamoSplit(v).map((t) => `<p>${inline(t)}</p>`).join("");
+    if (k === "p") return lineSplit(v, inBox).map((t) => t === "<보기>" ? `<p class="bogi-h">&lt;보기&gt;</p>` : `<p>${inline(t)}</p>`).join("");
     if (k === "fig") return `<div class="qfig"><img loading="lazy" alt="문항 그림" src="${esc((figBase || "") + v)}"></div>`;
-    if (k === "box") return `<div class="qbox">${blocks(v, figBase)}</div>`;
+    if (k === "box") return `<div class="qbox">${blocks(v, figBase, true)}</div>`;
+    if (k === "table" && isBogiTable(v)) return bogiTable(v, figBase);
     if (k === "table") return `<div class="qtable-wrap"><table class="qtable">${v.map((r) => `<tr>${r.map((c) => `<td>${inline(c)}</td>`).join("")}</tr>`).join("")}</table></div>`;
     return "";
   }
@@ -96,7 +130,7 @@
     const text = JSON.stringify(stem);
     const choiceText = (ch || []).join(" ");
     if (/[ㄱㄴㄷ](,|$|\s)/.test(choiceText) && !/ㄱ\s*[.．]/.test(text)) return false;
-    if (/그림과 같이|그림은|다음 그림/.test(text) && !/"fig"/.test(text)) return false;
+    if (/그림과 같|그림은|그림에서|다음 그림|아래 그림/.test(text) && !/"fig"/.test(text)) return false;   // 10-25 보기검수: 「그림에서」「그림과 같은」도 그림이 없으면 못 푼다
     return true;
   }
 
