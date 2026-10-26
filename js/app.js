@@ -120,7 +120,7 @@
       view().querySelectorAll("[data-g]").forEach((x) => x.setAttribute("aria-pressed", x === b));
       $("#go").disabled = false;
     });
-    $("#go").onclick = () => { STORE.set("grade", chosen); location.hash = "#/today"; location.reload(); };
+    $("#go").onclick = () => { STORE.set("grade", chosen); if (!location.hash.startsWith("#/try/")) location.hash = "#/today"; location.reload(); };   // 체험 링크로 처음 온 기기는 학년 고른 뒤 체험으로(10-26)
   }
 
   // ═════════ 화면: 오늘 ═════════
@@ -360,6 +360,14 @@
       const arr = exams.get(b.dataset.xm).slice().sort((a, b2) => a.id.localeCompare(b2.id));
       startSession(arr.map((q) => q.id), { kind: "exam", title: examTitle(arr) });
     });
+  }
+
+  // 체험 묶음(2026-10-26 대표님 「직접 풀어 보고 수준 평가」): #/try/HA~id1,id2;HB~id3 → 그 과정들을 불러와 바로 풀이
+  function screenTry(arg) {
+    const groups = decodeURIComponent(arg || "").split(";").map((g) => g.split("~"));
+    for (const [cid] of groups) if (!ensureCourse(cid, () => { if (location.hash.startsWith("#/try/")) screenTry(arg); })) return loadingView();
+    const ids = groups.flatMap(([, list]) => (list || "").split(",")).filter((i) => BYID.has(i));
+    startSession(ids, { kind: "try", title: "체험" });
   }
 
   // ═════════ 풀이 세션 ═════════
@@ -742,7 +750,7 @@
     document.body.classList.toggle("solving", name === "solve");
     $("#xpchip").textContent = `${STORE.s.xp.toLocaleString()} XP`;
     $("#streakchip").textContent = `${STORE.streak()}`;
-    ({ today: screenToday, skills: screenSkills, skill: () => screenSkill(arg), units: () => screenUnits(arg), concepts: () => screenConcepts(arg), concept: () => screenConcept(arg), exams: () => screenExams(arg), records: screenRecords, settings: screenSettings, solve: screenSolve }[name] || screenToday)();
+    ({ today: screenToday, skills: screenSkills, skill: () => screenSkill(arg), units: () => screenUnits(arg), concepts: () => screenConcepts(arg), concept: () => screenConcept(arg), exams: () => screenExams(arg), records: screenRecords, settings: screenSettings, solve: screenSolve, try: () => screenTry(arg) }[name] || screenToday)();
     if (window.SKILLFIG) SKILLFIG.mount(view());
     if (name !== "solve") window.scrollTo(0, 0);
   }
