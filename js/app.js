@@ -312,6 +312,7 @@
       <section class="card top" style="--gc:var(--accent)">
         <h1 class="h1">${QR.inline(c.이름)}</h1>
         <p class="quote qtext">${QR.inline(c.핵심)}</p>
+        ${(c.도식 || []).length && window.DIAGRAM ? `<div class="qtext">${(DIAGRAM.글꼴 = QR.inline, c.도식.map(DIAGRAM.html).join(""))}</div>` : ""}
         ${(c.공식 || []).length ? `<div class="formula-list">${c.공식.map((f) => `<div class="formula qtext">${QR.inline(f)}</div>`).join("")}</div>` : ""}
         ${c.자주틀림 ? `<div class="oops"><b>자주 헷갈리는 곳</b> ${QR.inline(c.자주틀림)}</div>` : ""}
         ${(c.스킬 || []).length ? `<div class="h-eyebrow" style="margin-top:14px">이 개념을 쓸 때 필요한 스킬</div><div class="signals chips-link">${c.스킬.filter((s) => SK.has(s)).map((s) => `<a href="#/skill/${s}" style="--gc:${gc(s)}"><b>${s}</b> ${esc(SK.get(s).이름)}</a>`).join("")}</div>` : ""}

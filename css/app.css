@@ -374,3 +374,6 @@ a { color: var(--accent); text-decoration: none; }
 .qbox .bogi-h { text-align: center; font-weight: 700; color: var(--ink-2); margin: 0 0 6px; letter-spacing: .1em; }
 .qbox p { margin: 0 0 4px; }
 .qbox p:last-child { margin-bottom: 0; }
+
+/* 개념 도식(2026-10-26) — diagram.css 색을 이 사이트 변수로 */
+.dg{--dg-key:var(--accent);--dg-key-soft:var(--accent-soft);--dg-a:var(--accent);--dg-b:var(--retry);--dg-line:var(--line);--dg-bg:var(--surface-2)}
