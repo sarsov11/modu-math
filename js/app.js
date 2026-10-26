@@ -692,7 +692,7 @@
       <div class="skins">${[["note", "모눈 노트", "차분한 종이"], ["arcade", "나이트 아케이드", "밤 11시 게임"], ["pop", "스티커 팝", "밝고 통통"]].map(([k, n, d]) => `<button class="skinopt" data-skinopt="${k}" aria-pressed="${S.skin === k}"><div class="sv sv-${k}"></div><b>${n}</b><span>${d}</span></button>`).join("")}</div>
       <section class="card" style="margin-top:14px">
         <div class="setting"><div class="l"><b>학년</b><span>권하는 스킬과 문항 범위가 바뀌어요</span></div><div class="seg">${["중2", "중3", "고1", "고2"].map((g) => `<button data-grade="${g}" aria-pressed="${S.grade === g}">${g}</button>`).join("")}</div></div>
-        <div class="setting"><div class="l"><b>화면 밝기</b><span>나이트 아케이드는 늘 어두워요</span></div><div class="seg">${[["system", "자동"], ["light", "밝게"], ["dark", "어둡게"]].map(([k, n]) => `<button data-theme="${k}" aria-pressed="${S.theme === k}">${n}</button>`).join("")}</div></div>
+        <div class="setting"><div class="l"><b>화면 밝기</b><span>나이트 아케이드는 늘 어두워요</span></div><div class="seg">${[["light", "밝게"], ["dark", "어둡게"]].map(([k, n]) => `<button data-theme="${k}" aria-pressed="${(S.theme === "dark") === (k === "dark")}">${n}</button>`).join("")}</div></div>
         <div class="setting"><div class="l"><b>펜으로만 그리기</b><span>펜이 닿으면 손바닥 터치는 무시해요</span></div><div class="seg"><button data-pen="1" aria-pressed="${!!S.penOnly}">켜기</button><button data-pen="0" aria-pressed="${!S.penOnly}">끄기</button></div></div>
       </section>
       <h3 class="h2">손글씨 인식 연습 <small>숫자를 써 보세요</small></h3>
@@ -735,7 +735,7 @@
   function applySkin() {
     const S = STORE.s, html = document.documentElement;
     html.dataset.skin = S.skin || "note";
-    if (S.theme === "system") delete html.dataset.theme; else html.dataset.theme = S.theme;
+    html.dataset.theme = S.theme === "dark" ? "dark" : "light";   // 10-26 대표님 「수학만 검은 배경」 — 기기 다크 모드를 따르지 않고 흰 바탕이 기본(어둡게는 고른 사람만)
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.content = getComputedStyle(document.body).getPropertyValue("--bg").trim();
   }
