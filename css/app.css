@@ -377,3 +377,26 @@ a { color: var(--accent); text-decoration: none; }
 
 /* 개념 도식(2026-10-26) — diagram.css 색을 이 사이트 변수로 */
 .dg{--dg-key:var(--accent);--dg-key-soft:var(--accent-soft);--dg-a:var(--accent);--dg-b:var(--retry);--dg-line:var(--line);--dg-bg:var(--surface-2)}
+
+/* 1105 새 판 풀이 묶음 — 유형 · 첫 수 · 풀이 · 함정 */
+.sol3{display:grid;gap:2px;margin:10px 0 6px}
+.sol-k{font-size:12.5px;font-weight:800;color:var(--ink-3);margin-top:8px}
+.sol-type{font-weight:800}
+.sol-first{font-size:16px;font-weight:700;line-height:1.55}
+.sol-lines{margin:2px 0 0;padding-left:22px;display:grid;gap:4px}
+.sol-trap{border-left:3px solid var(--retry);padding:1px 0 1px 10px;color:var(--ink-2)}
+.hint.firstmove b{color:var(--accent);margin-right:6px}
+/* 1105 단원 유형 카드(A안) */
+.tcards{display:grid;gap:8px;margin-top:10px}
+.tcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer}
+.tcard .th{display:flex;gap:12px;align-items:flex-start}
+.tcard .tn{flex:0 0 auto;width:28px;height:28px;border-radius:9px;background:var(--accent-soft);color:var(--accent);font-weight:800;display:grid;place-items:center;font-size:14px}
+.tcard .tt{font-weight:800;font-size:16px}
+.tcard .ts{font-size:13.5px;color:var(--ink-3)}
+.tcard .tb{display:none;margin-top:8px}
+.tcard.open .tb{display:block}
+.tcard.open .ts{display:none}
+.tcard .tk{font-size:12.5px;font-weight:800;color:var(--ink-3);margin:10px 0 2px}
+.tcard .tf{font-weight:700}
+.tcard .tr{border-left:3px solid var(--retry);padding:1px 0 1px 10px;color:var(--ink-2)}
+.tcard .tx{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}

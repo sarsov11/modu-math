@@ -237,10 +237,36 @@
         return `<button class="card unit" data-unit="${u.id}" ${n ? "" : 'disabled style="opacity:.5"'}><span class="no">${String(i + 1).padStart(2, "0")}</span><span><div class="nm">${esc(u.이름)}</div>${rec ? `<div class="muted" style="font-size:12px">${rec.ok}/${rec.n} 맞힘</div>` : ""}</span><span class="cnt tnum">${n}문항</span><span class="chev">›</span></button>`;
       }).join("")}</div>`;
     view().querySelectorAll("[data-course]").forEach((b) => b.onclick = () => { location.hash = `#/units/${b.dataset.course}`; });
-    view().querySelectorAll("[data-unit]").forEach((b) => b.onclick = () => {
-      const u = b.dataset.unit;
-      startSession(buildSet(usable.filter((q) => q.u === u), 10), { kind: "unit", id: u, title: UN.get(u).이름 });
-    });
+    view().querySelectorAll("[data-unit]").forEach((b) => b.onclick = () => { location.hash = `#/unit/${b.dataset.unit}`; });
+  }
+
+  // ═════════ 화면: 단원 한 장(1105 새 판 A안) ═════════
+  // 개념(한 줄) + 유형 카드(이렇게 나오면 · 첫 수 · 기준 · 함정 · 대표 기출). 유형 자료 js/data/types.js (클라우드 유형 정리 → 엔진이 만든다)
+  function screenUnit(uid) {
+    const u = UN.get(uid); if (!u) return screenUnits();
+    if (!ensureCourse(u.과정, () => { if (location.hash === `#/unit/${uid}`) screenUnit(uid); })) return loadingView();
+    const P = usable.filter((q) => q.u === uid);
+    const cs = CONCEPTS.filter((c) => c.단원 === uid);
+    const T = (window.TYPES && TYPES.unit && TYPES.unit[uid]) || [];
+    const byT = (tid) => P.filter((q) => TYPES.byQ[q.id] && TYPES.byQ[q.id].id === tid);
+    view().innerHTML = `<div class="today-head"><div class="h-eyebrow">${esc((TAX.과정.find((c) => c.id === u.과정) || {}).이름 || "")}</div><h1 class="h1">${esc(u.이름)}</h1></div>
+      ${cs.length ? `<h2 class="h2">개념</h2><div class="tcards">${cs.map((c) => `<a class="tcard" style="display:block;text-decoration:none;color:inherit" href="#/concept/${c.id}"><div class="tt">${QR.inline(c.이름)}</div><div class="ts" style="display:block">${QR.inline(c.핵심 || "")}</div></a>`).join("")}</div>` : ""}
+      ${T.length ? `<h2 class="h2">유형</h2><div class="tcards">${T.map((t, i) => {
+        const n = byT(t.id).length;
+        const reps = (t.대표 || []).map((id) => BYID.get(id)).filter(Boolean);
+        return `<div class="tcard${i === 0 ? " open" : ""}" data-t="${t.id}"><div class="th"><span class="tn">${i + 1}</span><div style="flex:1"><div class="tt">${esc(t.이름)}</div><div class="ts">${QR.inline(t.신호 || "")}</div></div><span class="muted tnum" style="font-size:13px">${n}문항</span></div>
+          <div class="tb"><div class="tk">이렇게 나오면</div><div>${QR.inline(t.신호 || "")}</div>
+            <div class="tk">첫 수</div><div class="tf">${QR.inline(t.첫수 || "")}</div>
+            <div class="tk">기준</div><div>${QR.inline(t.기준 || "")}</div>
+            <div class="tk">함정</div><div class="tr">${QR.inline(t.함정 || "")}</div>
+            ${reps.length ? `<div class="tk">대표 기출</div><div class="tx">${reps.map((q) => `<button class="btn btn-ghost st-mini" data-rep="${q.id}">${esc(srcLabel(q))}</button>`).join("")}</div>` : ""}
+            ${n ? `<button class="btn btn-primary btn-block" style="margin-top:12px" data-tset="${t.id}">이 유형 풀기 · ${Math.min(n, 8)}문항</button>` : ""}</div></div>`;
+      }).join("")}</div>` : ""}
+      <button class="btn ${T.length ? "btn-ghost" : "btn-primary"} btn-block" style="margin-top:16px" id="unitAll">단원 전체 풀기 · ${Math.min(P.length, 10)}문항</button>`;
+    view().querySelectorAll(".tcard[data-t]").forEach((c) => c.querySelector(".th").onclick = () => c.classList.toggle("open"));
+    view().querySelectorAll("[data-rep]").forEach((b) => b.onclick = (e) => { e.stopPropagation(); startSession([b.dataset.rep], { kind: "unit", id: uid, title: u.이름 }); route(); });
+    view().querySelectorAll("[data-tset]").forEach((b) => b.onclick = (e) => { e.stopPropagation(); const t = T.find((x) => x.id === b.dataset.tset); startSession(buildSet(byT(t.id), 8), { kind: "unit", id: uid, title: t.이름 }); route(); });
+    $("#unitAll").onclick = () => { startSession(buildSet(P, 10), { kind: "unit", id: uid, title: u.이름 }); route(); };
   }
 
   // ═════════ 화면: 개념 지도 ═════════
@@ -399,7 +425,7 @@
             ${q.k === "choice" ? `<div class="choices ${q.ch.every((c) => typeof c === "string" && c.replace(/\$[^$]*\$/g, "xx").length < 14) ? "short5" : ""}">${q.ch.map((c, k) => `<button class="choice" data-c="${k + 1}" aria-pressed="false"><span class="cn">${k + 1}</span><span>${Array.isArray(c) ? `<img class="choice-fig" alt="선지 그림" src="${esc((q.fb || "") + c[1])}">` : QR.inline(c)}</span></button>`).join("")}</div>` : ""}
           </section>
           <div id="coach"></div>
-          ${STEPUI.has(q) ? `<div class="helprow"><button class="btn btn-ghost stuck-btn" id="stuckBtn"><span class="st-q">?</span> 막혔어요 · 어디까지 왔는지 보기</button><button class="btn btn-ghost dk-btn" id="dkBtn">시작 힌트</button></div><div id="stepsHost"></div>` : ""}
+          ${STEPUI.has(q) ? `<div class="helprow"><button class="btn btn-ghost stuck-btn" id="stuckBtn"><span class="st-q">?</span> 막혔어요 · 어디까지 왔는지 보기</button><button class="btn btn-ghost dk-btn" id="dkBtn">첫 수 보기</button></div><div id="stepsHost"></div>` : ""}
           ${q.k === "short" ? (HWR.gradable(q.a) ? answerBox() : selfBox()) : ""}
           <div id="confwrap" hidden><div class="confidence"><button class="btn btn-primary" data-conf="sure">확실해요<small>이렇게 풀면 맞아요</small></button><button class="btn btn-ghost" data-conf="unsure">긴가민가<small>찍은 것 포함</small></button></div></div>
           <div id="verdict"></div>
@@ -438,8 +464,7 @@
       if (st.stepSess) { $("#stepsHost").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
       const s0 = start < 0 ? (obs ? obs.next() : 0) : start;
       STEPUI.open($("#stepsHost"), q, "check", {
-        start: s0, reached: obs ? obs.reached : [], ladder: COACH.ladder(q),
-        insight: (i) => COACH.stepCards(q, i), onInsight: (i) => COACH.log({ e: "그림열기", q: q.id, 단계: i + 1 }),
+        start: s0, reached: obs ? obs.reached : [], ladder: null,
         onStuck: (i, stp) => { st.stuck = { i, sid: stp.스킬 }; STORE.stuck(q, i, stp.스킬); },
         onRung: (i, n) => { st.rungs = (st.rungs || 0) + 1; COACH.log({ e: "사다리", q: q.id, 단계: i + 1, n }); },
       }).then((s) => { st.stepSess = s; $("#stepsHost").scrollIntoView({ behavior: "smooth", block: "start" }); });
@@ -450,9 +475,10 @@
       openSteps,
       reach: (k) => { if (st.stepSess && st.stepSess.reach) st.stepSess.reach(k); },
     };
-    if (window.OBSERVE) obs = window.__obs = OBSERVE.attach({ q, ink, pad: $("#pad"), host: coachHost, act, onInk: () => stopIdle.poke && stopIdle.poke() });
-    COACH.load(q).then(() => { if (!st.done && coachHost.isConnected) { stopIdle = COACH.watchIdle(coachHost, q, act); window.__coachStop = () => stopIdle(); } });
-    st.coach = { host: coachHost, act, stopIdle: () => stopIdle() };
+    // 1105 새 판(대표님 「구질구질」): 코칭 말 걸기·화살표 사다리·오답 되묻기를 화면에 띄우지 않는다. 관찰은 단계 도달 표시용으로만.
+    if (window.OBSERVE) obs = window.__obs = OBSERVE.attach({ q, ink, pad: $("#pad"), host: document.createElement("div"), act, onInk: () => {} });
+    COACH.load(q);
+    st.coach = null;
     view().querySelectorAll("[data-tool]").forEach((b) => b.onclick = () => { ink.setTool(b.dataset.tool); view().querySelectorAll("[data-tool]").forEach((x) => x.setAttribute("aria-pressed", x === b)); });
     view().querySelectorAll("[data-act]").forEach((b) => b.onclick = () => ({ undo: () => ink.undo(), redo: () => ink.redoOne(), clear: () => ink.clear(), read: () => readPad(ink), axes: () => { const on = $("#pad").classList.toggle("axes"); view().querySelector('[data-act="axes"]').setAttribute("aria-pressed", on); },
       // 그림 한 장이면 켜고 끄기, 여러 장이면 1→2→…→끄기→1 순으로 돈다. 획은 그대로 둔다
@@ -487,7 +513,7 @@
     const sb = $("#stuckBtn");
     if (sb) sb.onclick = () => openSteps(-1);
     const dkb = $("#dkBtn");
-    if (dkb) dkb.onclick = () => { stopIdle(); COACH.dontKnow(coachHost, q, act); };
+    if (dkb) dkb.onclick = () => { dkb.hidden = true; coachHost.innerHTML = `<div class="hint firstmove"><b>첫 수</b> ${QR.inline(q.st || "")}</div>`; };
     // 시연·스크린샷용: ?st=check(막혔어요 패널) · ?st=read(단계 풀이 전체)
     const stq = new URLSearchParams(location.search).get("st");
     if (sb && stq === "check") sb.click();
@@ -600,6 +626,24 @@
     HWR.load();
   }
 
+  // 1105 새 판 풀이 묶음 — 유형 · 첫 수 · 풀이 줄(3~5) · 함정
+  function solLines(q, S) {
+    if (q.sk && q.sk.length) return q.sk.slice(0, 5);
+    if (!S || !S.단계) return [];
+    const L = S.단계.map((d) => (d.식 && d.식.length ? d.식[d.식.length - 1] : "")).filter(Boolean);
+    return L.length > 5 ? L.slice(0, 4).concat([L[L.length - 1]]) : L;
+  }
+  function solBlock(q, S) {
+    const T = window.TYPES && TYPES.byQ && TYPES.byQ[q.id];
+    const C = window.COACH_DATA && COACH_DATA[q.id];
+    const trap = C && C.오답 && C.오답[0] && C.오답[0].착각;
+    const lines = solLines(q, S);
+    return `${T ? `<div class="sol-k">유형</div><div class="sol-type">${esc(T.이름)}</div>` : ""}
+      ${q.st ? `<div class="sol-k">첫 수</div><div class="sol-first">${QR.inline(q.st)}</div>` : ""}
+      ${lines.length ? `<div class="sol-k">풀이</div><ol class="sol-lines qtext">${lines.map((l) => `<li>${QR.inline(/\$/.test(l) ? l : "$" + l + "$")}</li>`).join("")}</ol>` : ""}
+      ${trap ? `<div class="sol-k">함정</div><div class="sol-trap">${QR.inline(trap)}</div>` : ""}`;
+  }
+
   function submit(q, st, conf, ink, self) {
     if (st.done) return;
     const user = self ? (st.selfOk ? q.a : "") : q.k === "choice" ? st.choice : (st.mode === "hand" ? st.hand : st.keyed);
@@ -622,13 +666,15 @@
       V.innerHTML = `<section class="verdict ${ok ? "ok" : "no"}" style="--gc:${gc(q.s && q.s[0])}">
         <div class="row"><span class="big">${ok ? (st.tries === 1 ? "정답!" : "두 번째에 해냈어요") : "풀이를 보고 다음에 다시 만나요"}</span>${gain ? `<span class="xp-float" style="margin-left:auto">+${gain} XP</span>` : ""}</div>
         ${!ok ? `<div class="hint">정답은 <b>${q.k === "choice" ? String(q.a).split(",").map((k) => "①②③④⑤"[+k - 1] + " " + (typeof q.ch[+k - 1] === "string" ? QR.inline(q.ch[+k - 1]) : "")).join(" · ") : QR.inline(/\$/.test(q.a) ? q.a : "$" + q.a + "$")}</b></div>` : ""}
-        ${sk ? `<div class="hint"><b>${sk.id} ${esc(sk.이름)}</b> — ${QR.inline(q.st || sk.핵심)}</div>` : ""}
-        ${st.stuck && st.stuck.sid && SK.has(st.stuck.sid) ? `<div class="hint stuck-note">${st.stuck.i + 1}단계에서 막혔어요 — <b>${st.stuck.sid} ${esc(SK.get(st.stuck.sid).이름)}</b> <button class="btn btn-ghost st-mini" data-drill="${st.stuck.sid}">이 스킬 드릴</button></div>` : ""}
-        ${STEPUI.has(q) ? `<button class="btn btn-ghost btn-block" id="readSteps">단계 풀이 보기</button>` : q.sk && q.sk.length ? `<ol class="sketch qtext">${q.sk.map((l) => `<li>${QR.inline(l)}</li>`).join("")}</ol>` : ""}
+        <div class="sol3" id="sol3">${solBlock(q, null)}</div>
+        ${st.stuck && st.stuck.sid && SK.has(st.stuck.sid) ? `<div class="hint stuck-note">${st.stuck.i + 1}단계에서 막혔어요 · <b>${esc(SK.get(st.stuck.sid).이름)}</b> <button class="btn btn-ghost st-mini" data-drill="${st.stuck.sid}">이 스킬 드릴</button></div>` : ""}
+        ${STEPUI.has(q) ? `<button class="btn btn-ghost btn-block" id="readSteps">단계마다 자세히 보기</button>` : ""}
         ${q.sol && q.sol.length ? `<details><summary style="cursor:pointer;font-weight:700;color:var(--accent)">해설 전체 보기</summary><div class="qtext" style="margin-top:6px">${QR.blocks(q.sol, q.fb)}</div></details>` : ""}
         <button class="btn btn-primary btn-block" id="next">${SESSION.i + 1 < SESSION.ids.length ? "다음 문항" : "결과 보기"}</button>
       </section>`;
       $("#next").onclick = () => { if (SESSION.i + 1 < SESSION.ids.length) { SESSION.i++; screenSolve(); window.scrollTo(0, 0); } else screenResult(); };
+      // 풀이 줄은 단계 풀이 자료가 있으면 그 결과 식으로 채운다(없으면 핵심 줄 q.sk)
+      if (!(q.sk && q.sk.length) && STEPUI.has(q) && STEPUI.load) STEPUI.load(q).then((S) => { const h = $("#sol3"); if (h && S) h.innerHTML = solBlock(q, S); });
       const rs = $("#readSteps");
       if (rs) rs.onclick = () => { rs.hidden = true; const sb = $("#stuckBtn"); if (sb) sb.hidden = true; STEPUI.open($("#stepsHost"), q, "read").then(() => $("#stepsHost").scrollIntoView({ behavior: "smooth", block: "start" })); };
       V.querySelectorAll("[data-drill]").forEach((b) => b.onclick = () => { const sid = b.dataset.drill; startSession(buildSet(skillPool(sid), 8), { kind: "skill", id: sid, title: SK.get(sid).이름 }); route(); });
@@ -644,7 +690,7 @@
       $("#confwrap").hidden = true;
       V.innerHTML = `<section class="verdict no" style="--gc:${gc(q.s && q.s[0])}">
         <span class="big">한 번 더 가 봐요</span>
-        ${sk ? `<div class="hint">힌트 · <b>${esc(sk.이름)}</b><br>${QR.inline(q.st || sk.핵심)}</div>` : `<div class="hint">조건을 하나씩 다시 읽어 봐요.</div>`}
+        ${q.st ? `<div class="hint firstmove"><b>첫 수</b> ${QR.inline(q.st)}</div>` : `<div class="hint">조건을 하나씩 다시 읽어 봐요.</div>`}
         <div class="muted" style="font-size:13px">다시 고르고 제출하면 돼요. 두 번째에는 풀이를 보여 드려요.</div></section>`;
       if (q.k === "choice") { st.choice = null; view().querySelectorAll("[data-c]").forEach((x) => x.setAttribute("aria-pressed", "false")); }
       if (st.coach) { st.coach.stopIdle(); if (COACH.onWrong(st.coach.host, q, user, st.coach.act)) st.coach.host.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
@@ -689,7 +735,7 @@
     const S = STORE.s;
     view().innerHTML = `<div class="today-head"><div class="h-eyebrow">내게 맞게</div><h1 class="h1">설정</h1></div>
       <h3 class="h2">디자인 <small>세 가지 중 골라 보세요</small></h3>
-      <div class="skins">${[["note", "모눈 노트", "차분한 종이"], ["arcade", "나이트 아케이드", "밤 11시 게임"], ["pop", "스티커 팝", "밝고 통통"]].map(([k, n, d]) => `<button class="skinopt" data-skinopt="${k}" aria-pressed="${S.skin === k}"><div class="sv sv-${k}"></div><b>${n}</b><span>${d}</span></button>`).join("")}</div>
+      
       <section class="card" style="margin-top:14px">
         <div class="setting"><div class="l"><b>학년</b><span>권하는 스킬과 문항 범위가 바뀌어요</span></div><div class="seg">${["중2", "중3", "고1", "고2"].map((g) => `<button data-grade="${g}" aria-pressed="${S.grade === g}">${g}</button>`).join("")}</div></div>
         <div class="setting"><div class="l"><b>화면 밝기</b><span>나이트 아케이드는 늘 어두워요</span></div><div class="seg">${[["light", "밝게"], ["dark", "어둡게"]].map(([k, n]) => `<button data-theme="${k}" aria-pressed="${(S.theme === "dark") === (k === "dark")}">${n}</button>`).join("")}</div></div>
@@ -734,7 +780,7 @@
 
   function applySkin() {
     const S = STORE.s, html = document.documentElement;
-    html.dataset.skin = S.skin || "note";
+    html.dataset.skin = "note";   // 1105 테라러닝 공통 디자인 하나만
     html.dataset.theme = S.theme === "dark" ? "dark" : "light";   // 10-26 대표님 「수학만 검은 배경」 — 기기 다크 모드를 따르지 않고 흰 바탕이 기본(어둡게는 고른 사람만)
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.content = getComputedStyle(document.body).getPropertyValue("--bg").trim();
@@ -745,12 +791,12 @@
     if (!STORE.s.grade) return onboard();
     const h = location.hash || "#/today";
     const [, name, arg] = h.split("/");
-    const tabs = { today: "today", skills: "skills", skill: "skills", concepts: "concepts", concept: "concepts", units: "concepts", exams: "exams", records: "records", settings: "settings", solve: "" };
+    const tabs = { today: "today", skills: "skills", skill: "skills", concepts: "concepts", concept: "concepts", units: "concepts", unit: "concepts", exams: "exams", records: "records", settings: "settings", solve: "" };
     document.querySelectorAll("[data-nav]").forEach((a) => a.setAttribute("aria-current", a.dataset.nav === tabs[name] ? "page" : "false"));
     document.body.classList.toggle("solving", name === "solve");
     $("#xpchip").textContent = `${STORE.s.xp.toLocaleString()} XP`;
     $("#streakchip").textContent = `${STORE.streak()}`;
-    ({ today: screenToday, skills: screenSkills, skill: () => screenSkill(arg), units: () => screenUnits(arg), concepts: () => screenConcepts(arg), concept: () => screenConcept(arg), exams: () => screenExams(arg), records: screenRecords, settings: screenSettings, solve: screenSolve, try: () => screenTry(arg) }[name] || screenToday)();
+    ({ today: screenToday, skills: screenSkills, skill: () => screenSkill(arg), units: () => screenUnits(arg), unit: () => screenUnit(decodeURIComponent(arg || "")), concepts: () => screenConcepts(arg), concept: () => screenConcept(arg), exams: () => screenExams(arg), records: screenRecords, settings: screenSettings, solve: screenSolve, try: () => screenTry(arg) }[name] || screenToday)();
     if (window.SKILLFIG) SKILLFIG.mount(view());
     if (name !== "solve") window.scrollTo(0, 0);
   }
