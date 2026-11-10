@@ -116,7 +116,7 @@
       var a = getSubj(), per = getPer(a.length); saveT(a, per);
       sec.innerHTML = '<h3 class="h2">공부할 과목 <small>하루 공부 시간</small></h3><section class="card pad16">' +
         '<div class="seg" data-k="subj">' + SUBJ.map(function (s) { var on = a.indexOf(s[0]) >= 0; return '<button data-s="' + s[0] + '" aria-pressed="' + on + '"' + (s[0] === ME ? ' aria-disabled="true"' : "") + ">" + s[1] + "</button>"; }).join("") + "</div>" +
-        '<p class="muted" style="font:600 12.5px/1.4 var(--font-ui);margin:10px 0 6px">과목당 하루 시간</p>' +
+        '<p class="muted" style="font:600 13px/1.4 var(--font-ui);margin:10px 0 6px">과목당 하루 시간</p>' +
         '<div class="seg" data-k="per">' + PERS.map(function (p) { var off = p[0] * a.length > MAXMIN; return '<button data-p="' + p[0] + '" aria-pressed="' + (p[0] === per) + '"' + (off ? ' disabled class="off"' : "") + ">" + p[1] + "</button>"; }).join("") + "</div>" +
         '<p class="tsum2">고른 과목 ' + a.length + "개 · 하루 합계 " + fmt(per * a.length) + "</p></section>";
       sec.querySelectorAll("[data-s]").forEach(function (b) { b.onclick = function () {
@@ -164,7 +164,7 @@
   }
   function hookPad() {
     if (window.STEPUI && !STEPUI.__std) { STEPUI.__std = 1; var h = STEPUI.has; STEPUI.has = function (q) { if (q && q.id) curQ = q; return h.apply(this, arguments); }; }
-    if (!window.TERA_PAD && !document.querySelector("script[data-tpad]")) { var sc = document.createElement("script"); sc.src = "js/tera-pad.js?v=1110a"; sc.dataset.tpad = "1"; sc.onload = padBtn; document.head.appendChild(sc); }
+    if (!window.TERA_PAD && !document.querySelector("script[data-tpad]")) { var sc = document.createElement("script"); sc.src = "js/tera-pad.js?v=1110d"; sc.dataset.tpad = "1"; sc.onload = padBtn; document.head.appendChild(sc); }
     var v = document.getElementById("view"); if (!v) return;
     new MutationObserver(function () { padBtn(); settingsTime(); }).observe(v, { childList: true });
     padBtn(); settingsTime();
@@ -246,7 +246,7 @@
   }
   function loadMap() {
     if (!window.TERA_MAP && !document.querySelector("script[data-tmap]")) {
-      var sc = document.createElement("script"); sc.src = "js/tera-map.js?v=1110c"; sc.dataset.tm = "1"; sc.onload = function () { mountMap(); }; document.head.appendChild(sc);
+      var sc = document.createElement("script"); sc.src = "js/tera-map.js?v=1110d"; sc.dataset.tm = "1"; sc.onload = function () { mountMap(); }; document.head.appendChild(sc);
     }
     var v = document.getElementById("view"); if (!v) return;
     var busy = false;
@@ -274,8 +274,8 @@
   };
   var lastKey = "";
   function loadTq() {
-    if (!document.querySelector("link[data-tq]")) { var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "css/tera-q.css?v=1110c"; l.dataset.tq = "1"; document.head.appendChild(l); }
-    if (!window.TERA_Q && !document.querySelector("script[data-tq]")) { var s = document.createElement("script"); s.src = "js/tera-q.js?v=1110c"; s.dataset.tq = "1"; document.head.appendChild(s); }
+    if (!document.querySelector("link[data-tq]")) { var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "css/tera-q.css?v=1110d"; l.dataset.tq = "1"; document.head.appendChild(l); }
+    if (!window.TERA_Q && !document.querySelector("script[data-tq]")) { var s = document.createElement("script"); s.src = "js/tera-q.js?v=1110d"; s.dataset.tq = "1"; document.head.appendChild(s); }
   }
   function vis(e) { var w = e && e.closest("#confwrap"); return !!e && !(w && w.hidden); }
   function qbar() {
@@ -309,4 +309,74 @@
   }
   function startQ() { loadTq(); setInterval(function () { try { qbar(); } catch (e) { } }, 300); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", startQ); else startQ();
+})();
+
+/* ───── 전 화면 정돈 (1110): 화면표준 14절 ─────
+   떠 있는 합격 전략 알약 대신 오늘 · 설정의 줄, 화면을 설명하는 안내 문장 빼기(근거는 설정 「자료 출처」 접힌 칸),
+   합격 전략 창(Shadow DOM)에 덮개 style. app.js · index.html 본문은 건드리지 않는다. */
+(function () {
+  "use strict";
+  function view() { return document.getElementById("view"); }
+  function zsRow() { var a = document.createElement("a"); a.className = "zsrow"; a.href = "javascript:void 0"; a.setAttribute("data-zs", "1"); a.textContent = "합격 전략"; return a; }
+  function tidy() {
+    var v = view(); if (!v) return;
+    v.querySelectorAll(".qtext, .quote").forEach(function (e) { if (!/qstem/.test(e.className)) e.className += " qstem"; });
+    v.querySelectorAll("p.muted").forEach(function (p) {
+      var t = p.textContent;
+      if (t.indexOf("막히면 단계 풀이로") === 0) { var i = t.indexOf(" · "); if (i > 0) p.textContent = t.slice(i + 3); }
+    });
+    /* 오늘: 목록 줄 하나 */
+    var row = v.querySelector(".statrow");
+    if (row && v.querySelector(".hero") && !v.querySelector(".zscard")) {
+      var c = document.createElement("section"); c.className = "card zscard"; c.appendChild(zsRow()); row.after(c);
+    }
+    /* 설정: 「공부」 판의 줄 하나 + 풀이 인식 안내는 자료 출처 접힌 칸으로 */
+    var ts = v.querySelector("#tstime .card");
+    if (ts && !ts.querySelector(".zsrow")) { var r = zsRow(); r.style.borderTop = "1px solid var(--line)"; r.style.marginTop = "14px"; r.style.padding = "0"; ts.appendChild(r); }
+    var sk = v.querySelector(".skins");
+    if (sk) v.querySelectorAll("a.btn-primary, button.btn-primary").forEach(function (b) { if (!b.closest(".hero")) b.remove(); });
+    if (sk && !v.querySelector("details.src")) {
+      var ps = [].filter.call(v.querySelectorAll("p.muted"), function (p) { return p.textContent.indexOf("Mathpix") >= 0 && p.textContent.length > 40; });
+      if (ps.length) {
+        var box = document.createElement("div");
+        box.innerHTML = '<h3 class="h2">자료 출처</h3><section class="card pad16"><details class="src"><summary>풀이 인식</summary></details></section>';
+        var d = box.querySelector("details");
+        ps.forEach(function (p) { var q = document.createElement("p"); q.textContent = p.textContent; p.remove(); d.appendChild(q); });
+        v.appendChild(box);
+      }
+    }
+  }
+  function mo() { var v = view(); if (!v) return; new MutationObserver(function () { try { tidy(); } catch (e) { } }).observe(v, { childList: true, subtree: true }); tidy(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mo); else mo();
+  document.addEventListener("click", function (e) { var a = e.target.closest && e.target.closest("[data-zs]"); if (a) { e.preventDefault(); if (window.ZZSTRAT) window.ZZSTRAT.open("math"); } });
+  var P = "#E5202E", PI = "#B61D29", PS = "rgba(229,32,46,.10)";
+  var OV = [
+    "#zs,#zst,#zsy{--zs-bg:#FFFFFF;--zs-card:#FFFFFF;--zs-line:#E6E8EC;--zs-red:" + P + ";--zs-blue:#F08A91;--zs-gold:#7C818C;--zs-soft:#F1F3F6;--zs-tx:#111419;--zs-sub:#5F6670}",
+    "#zs .top .t{letter-spacing:0;font-size:13px}#zs .top button{border-radius:12px}",
+    "#zs section{border-radius:18px;box-shadow:none}",
+    "#zs .chip{border-radius:999px;background:#F1F3F6;color:#333941}#zs .chip.r{background:" + PS + ";color:" + PI + "}",
+    "#zs .pk{border:1px solid #E6E8EC;border-radius:14px;background:#FFFFFF}#zs .pk.on{border-color:" + P + ";background:" + PS + ";box-shadow:none}",
+    "#zs .tg{border-radius:999px;font-size:11.5px}#zs .tg.a{background:" + P + ";color:#fff}#zs .tg.l{background:rgba(229,32,46,.16);color:" + PI + ";border:0}#zs .tg.g{background:#F1F3F6;color:#5F6670;border:0}",
+    "#zs .sc,#zs .sc.s,#zs .sc.d{border:1px solid #E6E8EC;border-radius:14px}#zs .sc.on{background:#FFFFFF}#zs .sc .rb{border-radius:999px}",
+    "#zs .sc.s .rb,#zs .sc.s .bar b{background:" + P + "}#zs .sc.d .rb,#zs .sc.d .bar b{background:#F08A91}#zs .sc.b .bar b{background:#B4BAC3}",
+    "#zs .det{border-radius:14px}#zs .vl i{background:" + P + ";border-radius:50%}",
+    "#zs .gauge .fl{background:rgba(229,32,46,.14)}#zs .stack i.s{background:" + P + "}#zs .stack i.d{background:#F08A91}#zs .stack i.b{background:#B4BAC3}",
+    "#zs .gp b{background:" + P + ";border-radius:12px}#zs .gp::after{background:" + P + "}#zs .gb .gline b{border-radius:12px}",
+    "#zs .gc .cd{border:1px solid #E6E8EC;border-radius:14px}",
+    "#zs .gc .cd:nth-child(1){--c:" + P + "!important}#zs .gc .cd:nth-child(2){--c:#F08A91!important}#zs .gc .cd:nth-child(3){--c:#F6B3B8!important}#zs .gc .cd:nth-child(n+4){--c:#9CA3AF!important}",
+    "#zs .gc .cg{border-radius:999px}#zs .hit{border-radius:14px}",
+    "#zs .q li.a::before{background:" + P + ";border-color:" + P + "}#zs .q .st.f{color:" + PI + ";border-color:" + PI + "}#zs .q{border-radius:14px}",
+    "#zs .go{background:" + P + ";border-radius:12px}#zst .nx{background:" + P + ";border-radius:12px}#zst .hole{border-radius:14px}#zst .bub{border-radius:18px}",
+    "#zsy .nx{background:" + P + "}#zsy .pg i{background:" + P + "}#zsy .pk{border:1px solid #E6E8EC}#zsy .pk.on{border-color:" + P + ";box-shadow:none}",
+    "#zsy .end button{border:1px solid " + P + ";color:" + PI + "}#zsy .end .main{background:" + P + ";color:#fff}"
+  ].join("\n");
+  function gl(root) { var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false), n; while ((n = w.nextNode())) { if (n.nodeValue.indexOf("합격전략") >= 0) n.nodeValue = n.nodeValue.replace(/합격전략/g, "합격 전략"); } }
+  function ov() {
+    var h = document.getElementById("zs-host");
+    if (h && h.shadowRoot) {
+      if (!h.shadowRoot.getElementById("mj-ov")) { var st = document.createElement("style"); st.id = "mj-ov"; st.textContent = OV; h.shadowRoot.appendChild(st); }
+      gl(h.shadowRoot);
+    }
+  }
+  new MutationObserver(ov).observe(document.documentElement, { childList: true, subtree: true }); ov();
 })();

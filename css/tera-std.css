@@ -294,3 +294,113 @@ body:not(.solving) .tq-bar { display:none; }
 .tpad-wrap .tpad-btn { display:inline-flex; flex-direction:row; align-items:center; gap:7px; width:auto; height:44px; padding:0 14px; border-radius:12px; border:0; box-shadow:inset 0 0 0 1.5px #D3D7DD; background:var(--surface); font:700 14.5px/1 var(--font-ui); }
 .tpad-wrap .tpad-btn svg { width:18px; height:18px; color:var(--pt); }
 .tpad-wrap { margin:14px 0 4px; }
+
+/* ════════ 전 화면 정돈 (1110) — 화면표준 14절: 포인트 한 가지 + 회색 · 글자 26·20·16·14·13·11.5 · 굵기 500~800 · 모서리 18·14·12·999·50% ════════ */
+:root:root:root { --lv1:color-mix(in srgb,var(--pt) 26%,#fff); --lv2:color-mix(in srgb,var(--pt) 50%,#fff); --lv3:color-mix(in srgb,var(--pt) 74%,#fff); --lv4:var(--pt-ink);
+  --g-G:var(--pt); --g-D:var(--pt); --g-N:var(--pt); --g-A:var(--pt); --g-C:var(--pt); --g-S:var(--pt); --g-P:var(--pt); --g-T:var(--pt); }
+html body > .zs-btn, html body .zs-fab, html body > .zs-fab { display:none !important; }
+.topbar .bn, .solve-top .ttl { font-size:16px; }
+@media (max-width:420px) { .topbar .bn { font-size:16px; } }
+.topbar .brand-mark { border-radius:12px; font-weight:800; }
+.topbar .bn b { font-weight:800; }
+.h1, .today-head .h1, [data-skin="arcade"] .h1, [data-skin="pop"] .h1 { font:800 26px/1.25 var(--font-ui); }
+.h-eyebrow, .qsrc { font-size:13px; }
+.h2 small { font-size:13px; font-weight:600; }
+.muted, .setting .l span { font-size:13px; font-weight:500; }
+.pill, .qmeta .pill { font-size:13px; font-weight:700; }
+.btn, .btn-primary, .btn-ghost { border-radius:12px; font:800 16px/1 var(--font-ui); }
+.btn-primary, [data-skin="note"] .btn-primary, [data-skin="pop"] .hero .btn-primary { box-shadow:none; border-radius:12px; }
+.btn-ghost { font-weight:700; }
+.btn.small, .btn-ghost.small { font-size:14px; }
+.hero .tstep h3 { font-weight:800; }
+.hero .tstep .tsum, .tsum { font-size:14px; }
+.hero .tstep .n { font-weight:800; font-size:14px; }
+.hero .tstep .tx b { font-size:16px; }
+.hero .tstep .tx span, .hero .tstep .m { font-size:13px; }
+.statrow .tier .name, .tier .name, .numcard b, .numcard span.b { font:800 20px/1.2 var(--font-ui); }
+.statrow .tier .muted, .numcard span { font-size:13px; }
+.stuck-card .ico { font-size:13px; font-weight:800; }
+.stuck-card .chev, .chev { font-size:16px; }
+.week i { font-size:13px; font-weight:700; }
+.unit .nm, .stuck-card .t { font-size:16px; }
+.unit .cnt, .stuck-card .s { font-size:13px; }
+.xpbar, .xpbar > i { border-radius:999px; }
+.week i, .progress-dots { border-radius:50%; }
+.progress-dots { border-radius:0; }
+.skill, .skill.concept { border-radius:14px; }
+.skill .bar, .skill .bar i { border-radius:999px; }
+.sw { border-radius:12px; }
+.course-tabs button { font-size:14px; }
+.exam-n, .exam-n.tnum, .lv-sub, .lvpill, .exam-row small { font-size:13px; font-weight:600; }
+.lv-name, .exam-row b, .lv-go, .exam-n b { font-size:16px; font-weight:800; }
+.lv1, .lv2, .lv3, .lv4 { border-radius:999px; }
+.bar, .bar i, .bar > i { border-radius:999px; }
+.tnum { font-weight:600; }
+.num { font-weight:800; }
+.setting .l b, .skinopt b { font-size:16px; font-weight:800; }
+.setting .l span { font-weight:500; }
+.sv { border-radius:14px; }
+.tool, .padbar .tool { font-size:13px; border-radius:12px; }
+.tpad-wrap .tpad-btn { font-size:14px; }
+.st-q { font-size:13px; font-weight:800; border-radius:999px; }
+.choice .cn { border-radius:50%; }
+.solve-top > .muted, .solve-top > .muted b { color:var(--ink-2) !important; }
+.choice, .choice .cn { color:var(--ink-2); }
+.choice .cn { box-shadow:inset 0 0 0 1px var(--t-edge); }
+.choice[aria-pressed="true"] { color:var(--pt-ink); }
+.choice.is-wrong { color:var(--retry); }
+.tq-tool, .tq-tool svg { color:var(--ink-2); }
+.tq-tool.is-on { color:var(--pt-ink); }
+.tq-nav { font-weight:500; }
+.tm-pv { border-radius:18px; }
+.summary, details > summary { font-size:14px; font-weight:700; }
+html body .brand-mark { border-radius:12px; font:800 14px/1 var(--font-ui); }
+html body .brand, html body .brand > span { font-size:16px; font-weight:800; }
+html body .dot { border-radius:999px; }
+html body .muted, html body p.muted, html body span.muted, html body .tnum.muted, html body .mrow .muted { font-size:13px; font-weight:500; }
+html body .ico, html body .ico.num { font-size:13px; font-weight:800; }
+html body .num, html body span.num.tnum, html body b.num { font-weight:800; }
+html body span.num.tnum, html body b.num, html body .mrow b { font-size:14px; }
+html body .skfig-w, html body dl.skfig-w, html body .skfig-w img, html body .skfig-w svg { border-radius:12px; }
+html body .tm-next s { font-size:14px; }
+html body .tm-pv { border-radius:18px; }
+html body .tm-go, html body .tm-x { font-size:16px; font-weight:800; }
+html body .tm-x { border-radius:50%; }
+html body .lvpill i, html body .lv-top i, html body i.lv1, html body i.lv2, html body i.lv3, html body i.lv4 { border-radius:999px; }
+html body .exam-src a, html body .exam-src button { font-size:14px; border-radius:12px; font-weight:700; }
+html body .bar, html body .bar i, html body .mrow .bar, html body .mrow .bar i { border-radius:999px; }
+html body .mrow .btn-ghost { font-size:13px; }
+html body .hwr-strip .ph, html body .hwr-read .lab, html body .hwr-strip, html body .hwr-read { font-size:14px; font-weight:500; }
+html body .sv { border-radius:12px; }
+html body .skinopt b { font-size:14px; }
+html body .progress-dots i { border-radius:0; }
+html body .tool, html body .tq-tool { font-size:13px; font-weight:700; }
+html body .btn.btn-ghost { font-size:14px; }
+html body .tq-nav { font-weight:500; }
+html body .muted, html body p.muted, html body span.muted, html body div.muted { font-size:13px !important; font-weight:500 !important; }
+html body span.ico, html body .ico, html body .tm-t .ico, html body .topbar .ico { font-size:13px !important; font-weight:800 !important; }
+html body .tq-tool, html body .tq-tool svg, html body .tq-bar .tq-tool { color:var(--ink-2) !important; font-size:13px !important; }
+html body .tq-tool.is-on { color:var(--pt-ink) !important; }
+html body .tq-nav, html body .tq-bar .tq-nav { color:var(--ink-2) !important; font-weight:500 !important; }
+html body .tq-nav.is-next, html body .tq-bar .tq-nav.is-next { color:#fff !important; font-weight:800 !important; }
+html body .skinopt .sv, html body .sv { border-radius:12px; }
+html body .mastery .mrow div, html body .mastery .mrow .muted, html body .mrow > div { font-weight:500; font-size:14px; }
+html body .mrow .btn-ghost, html body .mastery .btn-ghost { font-size:14px !important; }
+html body .solve .btn-ghost, html body .solve .btn { font-size:14px; }
+html body .progress-dots i { font-weight:500; }
+html body .src p, html body details.src p { font-size:13px; font-weight:500; color:var(--ink-3); line-height:1.6; margin:10px 0 0; }
+html body details.src summary { font-size:14px; font-weight:700; color:var(--pt-ink); cursor:pointer; list-style:none; }
+html body details.src summary::-webkit-details-marker { display:none; }
+html body details.src summary::after { content:" ▾"; } html body details.src[open] summary::after { content:" ▴"; }
+html body .row.zsrow, html body a.zsrow { display:flex; align-items:center; gap:10px; min-height:56px; padding:0 18px; text-decoration:none; color:var(--ink); font:800 16px/1.3 var(--font-ui); }
+html body a.zsrow::after { content:"›"; margin-left:auto; width:32px; height:32px; border-radius:50%; background:#F6F7F9; background:var(--surface-2); color:var(--ink-2); display:grid; place-items:center; font:700 18px/1 var(--font-ui); padding-bottom:2px; }
+html body .card.zscard { padding:0; margin-top:12px; }
+html body .skinopt span { font-weight:500; }
+html body .stuck-btn { font-size:14px !important; }
+html body .padbar .tool, html body button.tool { font-size:13px !important; font-weight:700; }
+html body .tq-stars i, html body .tq-stars b { font-weight:500; }
+html body .statrow .tier .muted, html body .tier .muted { font-size:13px !important; }
+html body #view td, html body #view dd, html body #view dt { font-weight:500; }
+html body #view th { font-weight:600; font-size:13px; }
+html body .lbl, html body span.lbl { font-size:13px; font-weight:500; }
+html body #view img { border-radius:12px; }
