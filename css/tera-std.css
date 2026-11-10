@@ -404,3 +404,9 @@ html body #view td, html body #view dd, html body #view dt { font-weight:500; }
 html body #view th { font-weight:600; font-size:13px; }
 html body .lbl, html body span.lbl { font-size:13px; font-weight:500; }
 html body #view img { border-radius:12px; }
+
+/* 합격 지도 3판: 긴 단원 이름 · 파트 이름은 줄을 바꿔 다 보이게 (11-10) */
+html body .tm-l{height:auto!important;min-height:28px;padding-top:5px!important;padding-bottom:5px!important}
+html body .tm-l span{white-space:normal!important;line-height:1.25!important;word-break:keep-all;overflow:visible!important;text-overflow:clip!important}
+html body .tm-dt .tm-t{height:auto!important;min-height:52px;padding-top:8px;padding-bottom:8px}
+html body .tm-dt .tm-nm{white-space:normal!important;display:block!important;-webkit-line-clamp:unset!important;overflow:visible!important}

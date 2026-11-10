@@ -164,7 +164,7 @@
   }
   function hookPad() {
     if (window.STEPUI && !STEPUI.__std) { STEPUI.__std = 1; var h = STEPUI.has; STEPUI.has = function (q) { if (q && q.id) curQ = q; return h.apply(this, arguments); }; }
-    if (!window.TERA_PAD && !document.querySelector("script[data-tpad]")) { var sc = document.createElement("script"); sc.src = "js/tera-pad.js?v=1110d"; sc.dataset.tpad = "1"; sc.onload = padBtn; document.head.appendChild(sc); }
+    if (!window.TERA_PAD && !document.querySelector("script[data-tpad]")) { var sc = document.createElement("script"); sc.src = "js/tera-pad.js?v=1110m"; sc.dataset.tpad = "1"; sc.onload = padBtn; document.head.appendChild(sc); }
     var v = document.getElementById("view"); if (!v) return;
     new MutationObserver(function () { padBtn(); settingsTime(); }).observe(v, { childList: true });
     padBtn(); settingsTime();
@@ -179,10 +179,27 @@
       yrs[y] = 1; (q.s || []).forEach(function (s) { cnt[s] = (cnt[s] || 0) + 1; });
     });
     var ny = Object.keys(yrs).length;
+    var UN = {}; (T["단원"] || []).forEach(function (u) { UN[u.id] = u["이름"]; });
+    var uc = {}, ok = {}, ut = {};
+    B.forEach(function (q) {
+      var y = (String(q.src || "").match(/(20\d\d)/) || [])[1];
+      (q.s || []).forEach(function (s) {
+        var k = s + "|" + q.u; ut[k] = (ut[k] || 0) + 1;
+        if (y) uc[k] = (uc[k] || 0) + 1;
+        if (window.STORE && STORE.lastOk(q.id)) ok[k] = (ok[k] || 0) + 1;
+      });
+    });
+    function leavesOf(s) {
+      return (s["단원"] || []).filter(function (u) { return UN[u]; }).map(function (u) {
+        var k = s.id + "|" + u, l = { name: UN[u].replace(/\s*[(（].*$/, "") || UN[u], pct: ut[k] ? Math.round((ok[k] || 0) / ut[k] * 100) : 0 };
+        if (uc[k] && ny) l.avg = Math.round(uc[k] / ny * 10) / 10;
+        return l;
+      });
+    }
     return (T["스킬갈래"] || []).map(function (b) {
       return { name: b["이름"], nodes: (T["스킬"] || []).filter(function (s) { return s["갈래"] === b.id; }).map(function (s) {
         var m = window.STORE && STORE.mastery ? STORE.mastery(s.id) : 0;
-        var n = { id: s.id, name: s["이름"], pct: Math.round((m || 0) * 100), leaves: [] };
+        var n = { id: s.id, name: s["이름"], pct: Math.round((m || 0) * 100), leaves: leavesOf(s) };
         if (cnt[s.id] && ny) n.avg = Math.round(cnt[s.id] / ny * 10) / 10;
         return n;
       }) };
@@ -198,6 +215,7 @@
     document.body.classList.add("tmapping");
     window.TERA_MAP.mount(host, {
       title: "수학", sub: "합격 지도", unit: "문제", mark: "star", groups: mapData(),
+      onLeaf: function (leaf, node) { location.hash = "#/skill/" + node.id; },
       onStart: function (node) { location.hash = "#/skill/" + node.id; }
     });
     if (gd) { var w = document.createElement("div"); w.style.cssText = "margin-top:14px"; w.appendChild(gd); v.appendChild(w); }
@@ -246,7 +264,7 @@
   }
   function loadMap() {
     if (!window.TERA_MAP && !document.querySelector("script[data-tmap]")) {
-      var sc = document.createElement("script"); sc.src = "js/tera-map.js?v=1110d"; sc.dataset.tm = "1"; sc.onload = function () { mountMap(); }; document.head.appendChild(sc);
+      var sc = document.createElement("script"); sc.src = "js/tera-map.js?v=1110m"; sc.dataset.tm = "1"; sc.onload = function () { mountMap(); }; document.head.appendChild(sc);
     }
     var v = document.getElementById("view"); if (!v) return;
     var busy = false;
@@ -274,8 +292,8 @@
   };
   var lastKey = "";
   function loadTq() {
-    if (!document.querySelector("link[data-tq]")) { var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "css/tera-q.css?v=1110d"; l.dataset.tq = "1"; document.head.appendChild(l); }
-    if (!window.TERA_Q && !document.querySelector("script[data-tq]")) { var s = document.createElement("script"); s.src = "js/tera-q.js?v=1110d"; s.dataset.tq = "1"; document.head.appendChild(s); }
+    if (!document.querySelector("link[data-tq]")) { var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "css/tera-q.css?v=1110m"; l.dataset.tq = "1"; document.head.appendChild(l); }
+    if (!window.TERA_Q && !document.querySelector("script[data-tq]")) { var s = document.createElement("script"); s.src = "js/tera-q.js?v=1110m"; s.dataset.tq = "1"; document.head.appendChild(s); }
   }
   function vis(e) { var w = e && e.closest("#confwrap"); return !!e && !(w && w.hidden); }
   function qbar() {
