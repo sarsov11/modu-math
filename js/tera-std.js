@@ -164,7 +164,7 @@
   }
   function hookPad() {
     if (window.STEPUI && !STEPUI.__std) { STEPUI.__std = 1; var h = STEPUI.has; STEPUI.has = function (q) { if (q && q.id) curQ = q; return h.apply(this, arguments); }; }
-    if (!window.TERA_PAD && !document.querySelector("script[data-tpad]")) { var sc = document.createElement("script"); sc.src = "js/tera-pad.js?v=1110m"; sc.dataset.tpad = "1"; sc.onload = padBtn; document.head.appendChild(sc); }
+    if (!window.TERA_PAD && !document.querySelector("script[data-tpad]")) { var sc = document.createElement("script"); sc.src = "js/tera-pad.js?v=1110n"; sc.dataset.tpad = "1"; sc.onload = padBtn; document.head.appendChild(sc); }
     var v = document.getElementById("view"); if (!v) return;
     new MutationObserver(function () { padBtn(); settingsTime(); }).observe(v, { childList: true });
     padBtn(); settingsTime();
@@ -264,7 +264,7 @@
   }
   function loadMap() {
     if (!window.TERA_MAP && !document.querySelector("script[data-tmap]")) {
-      var sc = document.createElement("script"); sc.src = "js/tera-map.js?v=1110m"; sc.dataset.tm = "1"; sc.onload = function () { mountMap(); }; document.head.appendChild(sc);
+      var sc = document.createElement("script"); sc.src = "js/tera-map.js?v=1110n"; sc.dataset.tm = "1"; sc.onload = function () { mountMap(); }; document.head.appendChild(sc);
     }
     var v = document.getElementById("view"); if (!v) return;
     var busy = false;
@@ -292,8 +292,8 @@
   };
   var lastKey = "";
   function loadTq() {
-    if (!document.querySelector("link[data-tq]")) { var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "css/tera-q.css?v=1110m"; l.dataset.tq = "1"; document.head.appendChild(l); }
-    if (!window.TERA_Q && !document.querySelector("script[data-tq]")) { var s = document.createElement("script"); s.src = "js/tera-q.js?v=1110m"; s.dataset.tq = "1"; document.head.appendChild(s); }
+    if (!document.querySelector("link[data-tq]")) { var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "css/tera-q.css?v=1110n"; l.dataset.tq = "1"; document.head.appendChild(l); }
+    if (!window.TERA_Q && !document.querySelector("script[data-tq]")) { var s = document.createElement("script"); s.src = "js/tera-q.js?v=1110n"; s.dataset.tq = "1"; document.head.appendChild(s); }
   }
   function vis(e) { var w = e && e.closest("#confwrap"); return !!e && !(w && w.hidden); }
   function qbar() {
