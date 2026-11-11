@@ -164,7 +164,7 @@
   }
   function hookPad() {
     if (window.STEPUI && !STEPUI.__std) { STEPUI.__std = 1; var h = STEPUI.has; STEPUI.has = function (q) { if (q && q.id) curQ = q; return h.apply(this, arguments); }; }
-    if (!window.TERA_PAD && !document.querySelector("script[data-tpad]")) { var sc = document.createElement("script"); sc.src = "js/tera-pad.js?v=1110p"; sc.dataset.tpad = "1"; sc.onload = padBtn; document.head.appendChild(sc); }
+    if (!window.TERA_PAD && !document.querySelector("script[data-tpad]")) { var sc = document.createElement("script"); sc.src = "js/tera-pad.js?v=1111c"; sc.dataset.tpad = "1"; sc.onload = padBtn; document.head.appendChild(sc); }
     var v = document.getElementById("view"); if (!v) return;
     new MutationObserver(function () { padBtn(); settingsTime(); }).observe(v, { childList: true });
     padBtn(); settingsTime();
@@ -264,7 +264,7 @@
   }
   function loadMap() {
     if (!window.TERA_MAP && !document.querySelector("script[data-tmap]")) {
-      var sc = document.createElement("script"); sc.src = "js/tera-map.js?v=1110p"; sc.dataset.tm = "1"; sc.onload = function () { mountMap(); }; document.head.appendChild(sc);
+      var sc = document.createElement("script"); sc.src = "js/tera-map.js?v=1111b"; sc.dataset.tm = "1"; sc.onload = function () { mountMap(); }; document.head.appendChild(sc);
     }
     var v = document.getElementById("view"); if (!v) return;
     var busy = false;
