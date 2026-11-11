@@ -171,7 +171,7 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", hookPad); else hookPad();
 
-  /* ───── 11절 합격 지도: 스킬 탭 화면을 공용 tera-map.js 로 ───── */
+  /* ───── 11절 합격 지도: 스킬 탭 화면을 공용 tera-map.js?v=1111g 로 ───── */
   function mapData() {
     var T = window.TAX, B = window.BANK || [], cnt = {}, yrs = {};
     B.forEach(function (q) {
@@ -264,7 +264,7 @@
   }
   function loadMap() {
     if (!window.TERA_MAP && !document.querySelector("script[data-tmap]")) {
-      var sc = document.createElement("script"); sc.src = "js/tera-map.js?v=1111d"; sc.dataset.tm = "1"; sc.onload = function () { mountMap(); }; document.head.appendChild(sc);
+      var sc = document.createElement("script"); sc.src = "js/tera-map.js?v=1111g"; sc.dataset.tm = "1"; sc.onload = function () { mountMap(); }; document.head.appendChild(sc);
     }
     var v = document.getElementById("view"); if (!v) return;
     var busy = false;
@@ -294,7 +294,7 @@
   function loadTq() {
     if (!document.querySelector("link[data-tq]")) { var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "css/tera-q.css?v=1110p"; l.dataset.tq = "1"; document.head.appendChild(l); }
     if (!document.querySelector("script[data-tqt]")) { window.TNQ = window.TNQ || []; (function (q) { var o = q.push; q.push = function (x) { (window.TNQ_KEEP = window.TNQ_KEEP || []).push(x); return o.apply(q, arguments); }; })(window.TNQ); var t = document.createElement("script"); t.src = "terms.js?v=1110t"; t.dataset.tqt = "1"; t.onerror = function () { }; t.onload = function () { try { if (window.DIAGRAM && DIAGRAM.tnFlush) DIAGRAM.tnFlush(); } catch (e) { } window.__tqt = 1; }; document.head.appendChild(t); }
-    if (!window.TERA_Q && !document.querySelector("script[data-tq]")) { var s = document.createElement("script"); s.src = "js/tera-q.js?v=1111d"; s.dataset.tq = "1"; document.head.appendChild(s); }
+    if (!window.TERA_Q && !document.querySelector("script[data-tq]")) { var s = document.createElement("script"); s.src = "js/tera-q.js?v=1111g"; s.dataset.tq = "1"; document.head.appendChild(s); }
   }
   function vis(e) { var w = e && e.closest("#confwrap"); return !!e && !(w && w.hidden); }
   function qbar() {
