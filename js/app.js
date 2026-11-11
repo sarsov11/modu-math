@@ -20,6 +20,7 @@
     "중3": ["M1", "M2", "M3"],
     "고1": ["M3", "HA", "HB"],
     "고2": ["HA", "HB", "HD", "HC", "HS"],
+    "고3": ["HD", "HC", "HS"],   // 수능 범위(대수·미적분Ⅰ·확통). 수능·모의평가 기출로 바로 들어가는 길(2026-11-12)
   };
   const scope = () => GRADE_SCOPE[STORE.s.grade] || ["M1", "M2", "M3"];
   const inScope = (q) => scope().includes(q.c);
@@ -106,7 +107,7 @@
   // ═════════ 화면: 첫 실행 ═════════
   function onboard() {
     document.body.classList.add("no-shell");
-    const grades = [["중2", "일차함수·닮음·확률"], ["중3", "이차함수·삼각비·원"], ["고1", "공통수학1·2"], ["고2", "대수·미적분Ⅰ·확통"]];
+    const grades = [["중2", "일차함수·닮음·확률"], ["중3", "이차함수·삼각비·원"], ["고1", "공통수학1·2"], ["고2", "대수·미적분Ⅰ·확통"], ["고3", "수능·모의평가 기출"]];
     view().innerHTML = `<div class="onboard"><div class="box">
       <div class="brand" style="margin-bottom:26px"><span class="brand-mark">∑</span> 모두의 수학</div>
       <div class="h-eyebrow">시작하기</div>
@@ -355,7 +356,8 @@
   // ═════════ 화면: 기출(교육청·평가원) ═════════
   function screenExams(arg) {
     const all = pool().filter((q) => q.lv);
-    const src = ["교육청", "평가원", "내신"].includes(decodeURIComponent(arg || "")) ? decodeURIComponent(arg) : "전체";
+    const _a = decodeURIComponent(arg || ""), _g3 = STORE.s.grade === "고3";   // 고3 은 기출 탭을 열면 수능·모의평가(평가원)부터 보인다(2026-11-12)
+    const src = ["교육청", "평가원", "내신"].includes(_a) ? _a : _a === "전체" || !_g3 ? "전체" : "평가원";
     const qs = all.filter((q) => src === "전체" || q.ex === src);
     const byLv = [1, 2, 3, 4].map((lv) => qs.filter((q) => q.lv === lv));
     const rate = (arr) => { const t = arr.filter((q) => STORE.seen(q.id)); return t.length ? Math.round(100 * t.filter((q) => STORE.lastOk(q.id)).length / t.length) : null; };
@@ -366,7 +368,7 @@
     const nSteps = qs.filter((q) => q.hs).length;
     view().innerHTML = `<div class="today-head"><div class="h-eyebrow">교육청 · 평가원 · 학교 내신</div><h1 class="h1">기출</h1>
         <p class="muted" style="margin:6px 0 0">막히면 단계 풀이로 어디까지 왔는지 맞춰 봐요 · 단계 풀이 ${nSteps.toLocaleString()}문항</p></div>
-      <div class="seg exam-src">${["전체", "교육청", "평가원", "내신"].filter((s) => s === "전체" || all.some((q) => q.ex === s)).map((s) => `<a href="#/exams/${s === "전체" ? "" : encodeURIComponent(s)}" aria-pressed="${src === s}">${s}</a>`).join("")}</div>
+      <div class="seg exam-src">${["전체", "교육청", "평가원", "내신"].filter((s) => s === "전체" || all.some((q) => q.ex === s)).map((s) => `<a href="#/exams/${s === "전체" ? (_g3 ? encodeURIComponent("전체") : "") : encodeURIComponent(s)}" aria-pressed="${src === s}">${s}</a>`).join("")}</div>
       <div class="lv-grid">${[1, 2, 3, 4].map((lv, i) => { const arr = byLv[i], r = rate(arr); return `<button class="card lv-card lv${lv}" data-lv="${lv}" ${arr.length ? "" : "disabled"}>
           <div class="lv-top">${lvPill(lv, true)}<span class="tnum muted">${arr.length}문항</span></div>
           <b class="lv-name">${LV[lv][1]}</b>
@@ -737,7 +739,7 @@
       <h3 class="h2">디자인 <small>세 가지 중 골라 보세요</small></h3>
       
       <section class="card" style="margin-top:14px">
-        <div class="setting"><div class="l"><b>학년</b><span>권하는 스킬과 문항 범위가 바뀌어요</span></div><div class="seg">${["중2", "중3", "고1", "고2"].map((g) => `<button data-grade="${g}" aria-pressed="${S.grade === g}">${g}</button>`).join("")}</div></div>
+        <div class="setting"><div class="l"><b>학년</b><span>권하는 스킬과 문항 범위가 바뀌어요</span></div><div class="seg">${["중2", "중3", "고1", "고2", "고3"].map((g) => `<button data-grade="${g}" aria-pressed="${S.grade === g}">${g}</button>`).join("")}</div></div>
         <div class="setting"><div class="l"><b>화면 밝기</b><span>나이트 아케이드는 늘 어두워요</span></div><div class="seg">${[["light", "밝게"], ["dark", "어둡게"]].map(([k, n]) => `<button data-theme="${k}" aria-pressed="${(S.theme === "dark") === (k === "dark")}">${n}</button>`).join("")}</div></div>
         <div class="setting"><div class="l"><b>펜으로만 그리기</b><span>펜이 닿으면 손바닥 터치는 무시해요</span></div><div class="seg"><button data-pen="1" aria-pressed="${!!S.penOnly}">켜기</button><button data-pen="0" aria-pressed="${!S.penOnly}">끄기</button></div></div>
       </section>

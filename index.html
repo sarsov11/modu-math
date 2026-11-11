@@ -64,7 +64,7 @@
 <script>
   // 학년에 필요한 과정 문항만 불러온다(동기 삽입 — app.js 보다 먼저 실행돼야 한다)
   (function () {
-    var scope = { "중2": ["M1", "M2"], "중3": ["M1", "M2", "M3"], "고1": ["M3", "HA", "HB"], "고2": ["HA", "HB", "HD", "HC", "HS"] };
+    var scope = { "중2": ["M1", "M2"], "중3": ["M1", "M2", "M3"], "고1": ["M3", "HA", "HB"], "고2": ["HA", "HB", "HD", "HC", "HS"], "고3": ["HD", "HC", "HS"] };
     var g = null;
     try { g = new URLSearchParams(location.search).get("grade") || JSON.parse(localStorage.getItem("modumath.v1") || "{}").grade; } catch (e) {}
     var list = g && scope[g] ? scope[g] : ["M1", "M2", "M3"];
