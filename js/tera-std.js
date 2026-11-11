@@ -293,6 +293,7 @@
   var lastKey = "";
   function loadTq() {
     if (!document.querySelector("link[data-tq]")) { var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "css/tera-q.css?v=1110p"; l.dataset.tq = "1"; document.head.appendChild(l); }
+    if (!document.querySelector("script[data-tqt]")) { var t = document.createElement("script"); t.src = "terms.js?v=1110t"; t.dataset.tqt = "1"; t.onerror = function () { }; t.onload = function () { try { if (window.DIAGRAM && DIAGRAM.tnFlush) DIAGRAM.tnFlush(); } catch (e) { } window.__tqt = 1; }; document.head.appendChild(t); }
     if (!window.TERA_Q && !document.querySelector("script[data-tq]")) { var s = document.createElement("script"); s.src = "js/tera-q.js?v=1110p"; s.dataset.tq = "1"; document.head.appendChild(s); }
   }
   function vis(e) { var w = e && e.closest("#confwrap"); return !!e && !(w && w.hidden); }
@@ -305,6 +306,12 @@
     if (meta && !meta.querySelector(".tq-badge-host") && window.TERA_Q) {
       var n = starsFor(curQ);
       if (n) { var h = document.createElement("span"); h.className = "tq-badge-host"; meta.insertBefore(h, meta.firstChild); TERA_Q.badge(h, { stars: n }); }
+    }
+    /* 개념어 띠(1110): terms.js 는 tera-q 보다 먼저 싣는다. 발문 · 선지 한 번만, 번호 줄에 켜기 · 끄기 단추 */
+    if (window.TERA_Q && window.TNQ && window.__tqt) {
+      if (!window.__tqt2) { window.__tqt2 = 1; if (TNQ.terms) TERA_Q.terms(TNQ.terms); }
+      if (meta && !meta.querySelector(".tq-toggle")) { var tg = document.createElement("span"); tg.style.marginLeft = "auto"; meta.appendChild(tg); TERA_Q.toggle(tg); }
+      Array.prototype.forEach.call(document.querySelectorAll(".solve .qcard .qtext:not(.sketch), .solve .qcard .choices"), function (h) { if (!h.dataset.tqa) { h.dataset.tqa = "1"; TERA_Q.annotate(h); } });
     }
     if (!bar) {
       bar = document.createElement("div"); bar.className = "tq-bar";
