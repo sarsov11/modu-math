@@ -260,7 +260,7 @@
             <div class="tk">첫 수</div><div class="tf">${QR.inline(t.첫수 || "")}</div>
             <div class="tk">기준</div><div>${QR.inline(t.기준 || "")}</div>
             <div class="tk">함정</div><div class="tr">${QR.inline(t.함정 || "")}</div>
-            ${reps.length ? `<div class="tk">대표 기출</div><div class="tx">${reps.map((q) => `<button class="btn btn-ghost st-mini" data-rep="${q.id}">${esc(srcLabel(q))}</button>`).join("")}</div>` : ""}
+            ${reps.filter(srcLabel).length ? `<div class="tk">대표 기출</div><div class="tx">${reps.filter(srcLabel).map((q) => `<button class="btn btn-ghost st-mini" data-rep="${q.id}">${esc(srcLabel(q))}</button>`).join("")}</div>` : ""}
             ${n ? `<button class="btn btn-primary btn-block" style="margin-top:12px" data-tset="${t.id}">이 유형 풀기 · ${Math.min(n, 8)}문항</button>` : ""}</div></div>`;
       }).join("")}</div>` : ""}
       <button class="btn ${T.length ? "btn-ghost" : "btn-primary"} btn-block" style="margin-top:16px" id="unitAll">단원 전체 풀기 · ${Math.min(P.length, 10)}문항</button>`;
