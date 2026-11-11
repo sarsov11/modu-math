@@ -264,7 +264,7 @@
   }
   function loadMap() {
     if (!window.TERA_MAP && !document.querySelector("script[data-tmap]")) {
-      var sc = document.createElement("script"); sc.src = "js/tera-map.js?v=1111b"; sc.dataset.tm = "1"; sc.onload = function () { mountMap(); }; document.head.appendChild(sc);
+      var sc = document.createElement("script"); sc.src = "js/tera-map.js?v=1111d"; sc.dataset.tm = "1"; sc.onload = function () { mountMap(); }; document.head.appendChild(sc);
     }
     var v = document.getElementById("view"); if (!v) return;
     var busy = false;
