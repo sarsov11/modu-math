@@ -785,7 +785,7 @@
     html.dataset.skin = "note";   // 1105 테라러닝 공통 디자인 하나만
     html.dataset.theme = S.theme === "dark" ? "dark" : "light";   // 10-26 대표님 「수학만 검은 배경」 — 기기 다크 모드를 따르지 않고 흰 바탕이 기본(어둡게는 고른 사람만)
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = getComputedStyle(document.body).getPropertyValue("--bg").trim();
+    if (meta) meta.content = html.dataset.theme === "dark" ? getComputedStyle(document.body).getPropertyValue("--bg").trim() : "#0F766E";   // 밝은 화면은 청록(공개 화면 표준)
   }
 
   function route() {
